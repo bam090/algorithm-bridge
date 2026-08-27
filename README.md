@@ -82,7 +82,21 @@ cd algorithm-bridge
 1. IntelliJ IDEA에서 `Open`을 선택한다.
 2. 내려받은 `algorithm-bridge` 폴더를 연다.
 3. Project SDK가 Amazon Corretto 26인지 확인한다.
-4. `src`가 Source Root로 인식됐는지 확인한다.
+
+#### `src`가 Source Root인지 확인하기
+
+Guide나 Test가 정상적으로 실행되고 package·import에 오류가 표시되지 않는다면 `src`가 이미 Source Root로 인식된 상태다. 이 경우 별도로 설정할 필요가 없다.
+
+실행되지 않거나 package·import가 빨갛게 표시되면 다음 순서로 확인한다.
+
+1. 왼쪽 `Project` 창에서 `src` 폴더를 우클릭한다.
+2. `Mark Directory as`를 선택한다. 한글 메뉴에서는 `디렉터리를 다음으로 표시`처럼 보일 수 있다.
+3. `Sources Root` 또는 `소스 루트`를 선택한다.
+4. `src` 폴더가 파란색으로 표시되는지 확인한다.
+
+우클릭 메뉴에 `Unmark as Sources Root` 또는 `소스 루트 표시 해제`가 보인다면 이미 설정된 상태다. 메뉴 이름은 IntelliJ IDEA 버전과 언어 설정에 따라 조금 다를 수 있다.
+
+`File → Project Structure → Modules → Sources`에서도 `src`가 파란색 Source Root로 지정됐는지 확인할 수 있다.
 
 ### 3. 주제별로 학습하기
 
