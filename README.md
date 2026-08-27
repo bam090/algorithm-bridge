@@ -58,6 +58,28 @@ Algorithm Bridge의 문제는 책의 몸풀기·모의테스트와 별도로 만
 → 백트래킹 → 정렬 → 시뮬레이션 → 동적 계획법 → 그리디
 ```
 
+각 주제는 IntelliJ의 `src/bridge` 아래에서 다음 패키지로 찾는다.
+
+```text
+src/bridge/
+├── array/               배열
+│   ├── onedimensional/  1차원 배열
+│   └── twodimensional/  2차원 배열
+├── stack/               스택
+├── queue/               큐
+├── hash/                해시
+├── tree/                트리
+├── set/                 집합
+├── graph/               그래프
+├── backtracking/        백트래킹
+├── sorting/             정렬
+├── simulation/          시뮬레이션
+├── dynamicprogramming/  동적 계획법
+└── greedy/              그리디
+```
+
+학습할 주제의 패키지를 열고 `<Topic>Guide.java`부터 읽는다.
+
 ## 실행 환경
 
 - IntelliJ IDEA 기본 빌드
@@ -68,7 +90,20 @@ Algorithm Bridge의 문제는 책의 몸풀기·모의테스트와 별도로 만
 
 ## 사용 방법
 
-### 1. 프로젝트 내려받기
+### 가장 간단한 방법 — AI에게 요청하기
+
+터미널과 로컬 파일을 다룰 수 있는 AI에게 아래 요청을 전달한다.
+
+```text
+https://github.com/bam090/algorithm-bridge 프로젝트를 이 컴퓨터에 내려받아
+IntelliJ IDEA에서 바로 학습할 수 있도록 준비해 줘.
+
+저장소의 README를 먼저 읽고 안내를 따라 줘.
+학습 문제·정답·테스트 파일은 수정하지 말고,
+내가 직접 해야 할 설정이 있다면 마지막에 알려 줘.
+```
+
+### 직접 시작하기
 
 터미널에서 다음 명령을 실행한다.
 
@@ -77,28 +112,15 @@ git clone https://github.com/bam090/algorithm-bridge.git
 cd algorithm-bridge
 ```
 
-### 2. IntelliJ IDEA에서 열기
-
 1. IntelliJ IDEA에서 `Open`을 선택한다.
 2. 내려받은 `algorithm-bridge` 폴더를 연다.
 3. Project SDK가 Amazon Corretto 26인지 확인한다.
 
-#### `src`가 Source Root인지 확인하기
+저장소에 IntelliJ 설정이 포함되어 있으므로 `src`는 일반적으로 자동 인식된다.
 
-Guide나 Test가 정상적으로 실행되고 package·import에 오류가 표시되지 않는다면 `src`가 이미 Source Root로 인식된 상태다. 이 경우 별도로 설정할 필요가 없다.
+> package·import 오류가 표시되거나 실행 버튼이 나타나지 않을 때만 `src` 우클릭 → `Mark Directory as` → `Sources Root`를 선택한다.
 
-실행되지 않거나 package·import가 빨갛게 표시되면 다음 순서로 확인한다.
-
-1. 왼쪽 `Project` 창에서 `src` 폴더를 우클릭한다.
-2. `Mark Directory as`를 선택한다. 한글 메뉴에서는 `디렉터리를 다음으로 표시`처럼 보일 수 있다.
-3. `Sources Root` 또는 `소스 루트`를 선택한다.
-4. `src` 폴더가 파란색으로 표시되는지 확인한다.
-
-우클릭 메뉴에 `Unmark as Sources Root` 또는 `소스 루트 표시 해제`가 보인다면 이미 설정된 상태다. 메뉴 이름은 IntelliJ IDEA 버전과 언어 설정에 따라 조금 다를 수 있다.
-
-`File → Project Structure → Modules → Sources`에서도 `src`가 파란색 Source Root로 지정됐는지 확인할 수 있다.
-
-### 3. 주제별로 학습하기
+### 주제별로 학습하기
 
 1. 학습할 주제의 `<Topic>Guide.java`를 읽고 `main()`을 실행한다.
 2. `problem/<Topic>ProblemNN.java`의 문제와 생각 질문을 읽는다.
