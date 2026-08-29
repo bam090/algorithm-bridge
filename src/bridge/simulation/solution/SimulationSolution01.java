@@ -37,24 +37,32 @@ public final class SimulationSolution01 {
     }
 
     public static int[] solve(int initialValue, String[] commands, int minimumValue, int maximumValue) {
+        // 명령을 적용할지는 바뀐 값이 허용 범위 안인지 보고 결정해야 한다.
+        // current를 바로 고치지 않고 candidate를 검사하면 필요한 경우에만 값을 저장할 수 있다.
+        // [1] 현재 값을 initialValue로 시작한다.
         int current = initialValue;
         int rejectedCount = 0;
 
         for (String command : commands) {
+            // [2] 명령을 1 또는 -1의 변화량으로 바꾼다.
             int change = switch (command) {
                 case "UP" -> 1;
                 case "DOWN" -> -1;
                 default -> throw new IllegalArgumentException("지원하지 않는 명령: " + command);
             };
 
+            // [3] 현재 값에 변화량을 더한 후보 값을 만든다.
             int candidate = current + change;
+            // [4] 후보가 허용 범위 안이면 현재 값으로 확정한다.
             if (minimumValue <= candidate && candidate <= maximumValue) {
                 current = candidate;
             } else {
+                // [5] 범위 밖이면 현재 값은 그대로 두고 무시한 명령 수를 늘린다.
                 rejectedCount++;
             }
         }
 
+        // [6] 최종 값과 무시한 명령 수를 새 배열로 반환한다.
         return new int[]{current, rejectedCount};
     }
 }

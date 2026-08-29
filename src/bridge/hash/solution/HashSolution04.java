@@ -41,14 +41,23 @@ public final class HashSolution04 {
     }
 
     public static long[] solve(String[] deviceIds, int[] factors, int[] readings) {
+        // 앞 기록도 같은 ID의 마지막 계수로 계산해야 하므로 입력 즉시 결과를 정할 수 없다.
+        // Map으로 마지막 계수를 먼저 덮어쓴 뒤 다시 읽으면 원래 기록 순서도 지킬 수 있다.
+
+        // [1] 모든 기록을 읽어 ID별 마지막 보정 계수를 저장한다.
         Map<String, Integer> finalFactors = new HashMap<>();
         for (int index = 0; index < deviceIds.length; index++) {
             finalFactors.put(deviceIds[index], factors[index]);
         }
 
+        // [2] 결과 배열을 기록 수만큼 만든다.
         long[] adjustedReadings = new long[deviceIds.length];
+
+        // [3] 기록을 처음부터 다시 읽는다.
         for (int index = 0; index < deviceIds.length; index++) {
             long factor = finalFactors.get(deviceIds[index]);
+
+            // [4] 각 측정값에 그 ID의 마지막 계수를 곱해 같은 위치에 저장한다.
             adjustedReadings[index] = factor * readings[index];
         }
         return adjustedReadings;

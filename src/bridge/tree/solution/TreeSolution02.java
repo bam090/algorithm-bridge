@@ -10,9 +10,13 @@ public final class TreeSolution02 {
     }
 
     public static int solve(int[] values, int target, String visitMoment) {
+        // 왼쪽과 오른쪽을 방문하는 흐름은 같고, 현재 값을 기록하는 순간만 달라진다.
+        // 재귀 호출 사이의 기록 위치를 바꾸면 세 방문 순서를 같은 구조로 정확히 표현할 수 있다.
+
         List<Integer> visitOrder = new ArrayList<>(values.length);
         record(values, 0, visitMoment, visitOrder);
 
+        // [6] 완성된 목록에서 target을 찾고 인덱스에 1을 더한다.
         for (int index = 0; index < visitOrder.size(); index++) {
             if (visitOrder.get(index) == target) {
                 return index + 1;
@@ -27,17 +31,25 @@ public final class TreeSolution02 {
             String visitMoment,
             List<Integer> visitOrder
     ) {
+        // [1] 현재 인덱스가 배열 밖이면 재귀를 끝낸다.
         if (index >= values.length) {
             return;
         }
 
+        // [2] BEFORE이면 자식 호출 전에 현재 값을 기록한다.
         if (visitMoment.equals("BEFORE")) {
             visitOrder.add(values[index]);
         }
+
+        // [3] 왼쪽 자식을 방문한다.
         record(values, index * 2 + 1, visitMoment, visitOrder);
+
+        // [4] BETWEEN이면 두 자식 호출 사이에 현재 값을 기록한다.
         if (visitMoment.equals("BETWEEN")) {
             visitOrder.add(values[index]);
         }
+
+        // [5] 오른쪽 자식을 방문하고 AFTER이면 현재 값을 기록한다.
         record(values, index * 2 + 2, visitMoment, visitOrder);
         if (visitMoment.equals("AFTER")) {
             visitOrder.add(values[index]);

@@ -11,6 +11,8 @@ public final class BacktrackingSolution03 {
             int[] requiredEnergy,
             int[] signedEnergyChange
     ) {
+        // 장치마다 점검 가능 여부가 현재 에너지와 앞에서 고른 장치에 따라 달라진다.
+        // 낮은 번호부터 재귀로 골라 보고 선택을 취소하면 사전식 첫 가능 순서를 찾을 수 있다.
         boolean[] visited = new boolean[requiredEnergy.length];
         int[] currentOrder = new int[requiredEnergy.length];
         return findFirstOrder(
@@ -31,16 +33,20 @@ public final class BacktrackingSolution03 {
             boolean[] visited,
             int[] currentOrder
     ) {
+        // [1] 모든 장치를 점검했다면 현재 1기반 순서를 복사하고 성공을 반환한다.
         if (depth == requiredEnergy.length) {
             return currentOrder.clone();
         }
 
+        // [2] 아직 점검하지 않은 장치를 낮은 번호부터 확인한다.
         for (int device = 0; device < requiredEnergy.length; device++) {
+            // [3] 현재 에너지가 필요 에너지 이상이고 변화 뒤 에너지가 0 이상인 장치만 고른다.
             int nextEnergy = currentEnergy + signedEnergyChange[device];
             if (visited[device] || currentEnergy < requiredEnergy[device] || nextEnergy < 0) {
                 continue;
             }
 
+            // [4] 장치 번호를 순서에 적고 점검 표시한 뒤, 바뀐 에너지로 다음 깊이를 확인한다.
             visited[device] = true;
             currentOrder[depth] = device + 1;
             int[] completedOrder = findFirstOrder(
@@ -51,6 +57,7 @@ public final class BacktrackingSolution03 {
                     visited,
                     currentOrder
             );
+            // [5] 돌아오면 점검 표시를 지우고, 완성에 성공했다면 즉시 탐색을 끝낸다.
             visited[device] = false;
 
             if (completedOrder.length > 0) {

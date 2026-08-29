@@ -9,8 +9,17 @@ public final class ArraySolution08 {
     }
 
     public static int solve(int[] values) {
+        // 복사 후 정렬하는 이유:
+        // 중앙값은 작은 순서로 놓았을 때의 가운데 값이므로 정렬이 필요하다.
+        // Arrays.sort()는 배열 자체를 바꾸므로 원본을 지키려면 복사본을 정렬해야 한다.
+
+        // [1] values를 복사해 sorted를 만든다.
         int[] sorted = values.clone();
+
+        // [2] sorted를 오름차순으로 정렬한다.
         Arrays.sort(sorted);
+
+        // [3] sorted.length / 2 인덱스의 값을 반환한다.
         return sorted[sorted.length / 2];
     }
 

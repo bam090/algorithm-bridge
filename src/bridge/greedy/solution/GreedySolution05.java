@@ -12,11 +12,16 @@ public final class GreedySolution05 {
     }
 
     public static String[] solve(String[] sourceLabels, int targetRecords, int sourceLimit) {
+        // Map과 큰 묶음 우선 선택을 사용하는 이유:
+        // 같은 출처는 함께 조사하므로 개수를 모으고, 큰 묶음부터 골라야 제한 안에서 가장 많이 덮는다.
+
+        // [1] 출처별 오류 기록 수를 Map에 센다.
         Map<String, Integer> counts = new HashMap<>();
         for (String label : sourceLabels) {
             counts.merge(label, 1, Integer::sum);
         }
 
+        // [2] 출처를 기록 수 내림차순, 이름 사전순으로 정렬한다.
         List<Map.Entry<String, Integer>> groups = new ArrayList<>(counts.entrySet());
         groups.sort((left, right) -> {
             int byCount = Integer.compare(right.getValue(), left.getValue());
@@ -28,6 +33,8 @@ public final class GreedySolution05 {
 
         List<String> selected = new ArrayList<>();
         int coveredRecords = 0;
+
+        // [3] 큰 묶음부터 이름과 기록 수를 누적하며 목표에 도달하면 즉시 멈춘다.
         for (Map.Entry<String, Integer> group : groups) {
             if (coveredRecords >= targetRecords) {
                 break;
@@ -38,6 +45,8 @@ public final class GreedySolution05 {
             selected.add(group.getKey());
             coveredRecords += group.getValue();
         }
+
+        // [4] sourceLimit 안에서 성공하면 이름 목록, 실패하면 빈 배열을 반환한다.
         if (coveredRecords < targetRecords) {
             return new String[]{};
         }

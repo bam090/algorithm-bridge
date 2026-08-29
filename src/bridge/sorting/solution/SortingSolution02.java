@@ -14,8 +14,8 @@ package bridge.sorting.solution;
  *
  * 풀이 순서
  * 1. first와 second의 현재 위치를 0으로 둔다.
- * 2. 두 현재 값을 비교해 작은 값을 선택하고 그 배열의 위치를 한 칸 옮긴다.
- * 3. 한쪽이 끝났으면 다른 배열에서 선택한다.
+ * 2. 한쪽 배열이 끝났으면 다른 배열에서 선택한다.
+ * 3. 두 배열에 값이 남아 있으면 두 현재 값을 비교해 작은 값을 선택하고 그 배열의 위치를 한 칸 옮긴다.
  * 4. 선택 횟수가 rank가 되면 마지막으로 선택한 값을 반환한다.
  *
  * 예시 데이터 흐름
@@ -39,12 +39,17 @@ public final class SortingSolution02 {
     }
 
     public static int solve(int[] first, int[] second, int rank) {
+        // 두 배열이 이미 정렬되어 있어 아직 고르지 않은 첫 값끼리만 비교하면 된다.
+        // 두 위치를 따로 움직이면 합친 배열을 만들지 않고도 rank번째 값을 찾을 수 있다.
+        // [1] first와 second의 현재 위치를 0으로 둔다.
         int firstIndex = 0;
         int secondIndex = 0;
         int selectedCount = 0;
         int selectedValue = 0;
 
         while (selectedCount < rank) {
+            // [2] 한쪽 배열이 끝났으면 다른 배열에서 선택한다.
+            // [3] 두 배열에 값이 남아 있으면 두 현재 값을 비교해 작은 값을 선택하고 그 배열의 위치를 한 칸 옮긴다.
             if (firstIndex == first.length) {
                 selectedValue = second[secondIndex++];
             } else if (secondIndex == second.length) {
@@ -57,6 +62,7 @@ public final class SortingSolution02 {
             selectedCount++;
         }
 
+        // [4] 선택 횟수가 rank가 되면 마지막으로 선택한 값을 반환한다.
         return selectedValue;
     }
 }

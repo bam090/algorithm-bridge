@@ -7,6 +7,10 @@ public final class SetSolution03 {
     }
 
     public static int solve(int itemCount, int[][] connections) {
+        // 연결할 때마다 두 작업대가 속한 전체 구역이 같은지만 알아야 한다.
+        // 유니온-파인드는 최종 대표를 찾아 구역을 합치므로 매번 모든 연결을 다시 훑지 않는다.
+
+        // [1] parent[i]=i, groupSize[i]=1로 각 작업대를 자기 구역에서 시작한다.
         int[] parent = new int[itemCount];
         int[] groupSize = new int[itemCount];
         for (int i = 0; i < itemCount; i++) {
@@ -17,13 +21,17 @@ public final class SetSolution03 {
         int groupCount = itemCount;
         for (int[] connection : connections) {
             if (union(parent, groupSize, connection[0], connection[1])) {
+                // [4] 실제로 두 그룹을 합친 경우에만 groupCount를 1 줄인다.
                 groupCount--;
             }
         }
+
+        // [5] 모든 연결 뒤 groupCount를 반환한다.
         return groupCount;
     }
 
     private static int find(int[] parent, int value) {
+        // [2] 작업대에서 부모를 따라가 최종 대표를 찾는다.
         if (parent[value] != value) {
             parent[value] = find(parent, parent[value]);
         }
@@ -33,6 +41,8 @@ public final class SetSolution03 {
     private static boolean union(int[] parent, int[] groupSize, int first, int second) {
         int firstRoot = find(parent, first);
         int secondRoot = find(parent, second);
+
+        // [3] 두 대표가 다르면 작은 그룹의 대표를 큰 그룹의 대표 아래에 붙인다.
         if (firstRoot == secondRoot) {
             return false;
         }

@@ -41,13 +41,20 @@ public final class SortingSolution04 {
     }
 
     public static int[] solve(int[] measurements, int startIndex, int endIndex) {
+        // 지정 구간만 정렬해야 하지만 입력 배열의 순서는 보존해야 한다.
+        // 구간을 복사해 정렬하면 원본을 건드리지 않고 이웃한 값의 차이를 바로 구할 수 있다.
+        // [1] startIndex부터 endIndex까지를 새 배열로 복사한다.
         int[] selected = Arrays.copyOfRange(measurements, startIndex, endIndex + 1);
+        // [2] 복사한 배열을 오름차순으로 정렬한다.
         Arrays.sort(selected);
 
+        // [3] 선택한 값의 개수보다 하나 작은 결과 배열을 만든다.
         int[] answer = new int[selected.length - 1];
+        // [4] 두 번째 값부터 확인하며 현재 값에서 바로 앞 값을 뺀다.
         for (int index = 1; index < selected.length; index++) {
             answer[index - 1] = selected[index] - selected[index - 1];
         }
+        // [5] 간격 배열을 반환한다.
         return answer;
     }
 }

@@ -7,15 +7,28 @@ public final class ArraySolution07 {
     }
 
     public static int[] solve(int[][] records) {
+        // 중첩 반복을 선택한 이유:
+        // 날짜마다 행 길이가 다르므로 바깥에서 행을 고르고 현재 행의 값만 끝까지 확인한다.
+        // 행마다 합계 하나를 같은 번호의 결과 칸에 저장하면 문제의 출력과 바로 맞는다.
+
+        // [1] 행의 개수와 같은 길이의 rowSums를 만든다.
         int[] rowSums = new int[records.length];
 
+        // [2] 바깥 반복문에서 row번째 행을 고른다.
         for (int row = 0; row < records.length; row++) {
+            // [3] 현재 행의 합 rowSum을 0으로 시작한다.
             int rowSum = 0;
+
+            // [4] 안쪽 반복문에서 records[row]의 값을 모두 rowSum에 더한다.
             for (int column = 0; column < records[row].length; column++) {
                 rowSum += records[row][column];
             }
+
+            // [5] rowSum을 rowSums[row]에 저장한다.
             rowSums[row] = rowSum;
         }
+
+        // [6] 모든 행을 처리한 뒤 rowSums를 반환한다.
         return rowSums;
     }
 

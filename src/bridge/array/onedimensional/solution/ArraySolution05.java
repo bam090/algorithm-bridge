@@ -7,17 +7,29 @@ public final class ArraySolution05 {
     }
 
     public static long[] solve(int[] values, int[][] ranges) {
+        // 누적 합을 선택한 이유:
+        // 같은 배열의 구간 합을 최대 100,000번 묻기 때문에 매번 다시 더하면 반복 작업이 크다.
+        // 처음부터의 합을 한 번 저장하면 각 구간은 두 값의 차이로 구할 수 있다.
+
+        // [1] 맨 앞에 0을 둔 길이 values.length + 1의 prefixSums를 만든다.
         long[] prefixSums = new long[values.length + 1];
+
+        // [2] prefixSums[i+1]에 values[0]부터 values[i]까지의 합을 저장한다.
         for (int i = 0; i < values.length; i++) {
             prefixSums[i + 1] = prefixSums[i] + values[i];
         }
 
+        // [3] ranges와 같은 길이의 answers를 만들고 각 [start, end]를 차례로 읽는다.
         long[] answers = new long[ranges.length];
         for (int i = 0; i < ranges.length; i++) {
             int start = ranges[i][0];
             int end = ranges[i][1];
+
+            // [4] 두 누적 합의 차이를 질문과 같은 인덱스의 answers에 저장한다.
             answers[i] = prefixSums[end] - prefixSums[start - 1];
         }
+
+        // [5] answers를 반환한다.
         return answers;
     }
 

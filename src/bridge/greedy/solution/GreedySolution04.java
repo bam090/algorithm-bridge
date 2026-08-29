@@ -9,6 +9,10 @@ public final class GreedySolution04 {
     }
 
     public static int solve(int[] weights, int minimumPairWeight, int maximumPairWeight) {
+        // 정렬과 양끝 포인터를 선택한 이유:
+        // 양끝 합을 보면 너무 가볍거나 무거워 다시 쓸 수 없는 추를 바로 제외할 수 있다.
+
+        // [1] 원본을 복사해 무게 오름차순으로 정렬한다.
         int[] ordered = weights.clone();
         Arrays.sort(ordered);
 
@@ -17,17 +21,23 @@ public final class GreedySolution04 {
         int heavy = ordered.length - 1;
 
         while (light < heavy) {
+            // [2] 가장 가벼운 추와 가장 무거운 추의 합을 계산한다.
             long combinedWeight = (long) ordered[light] + ordered[heavy];
+
+            // [3] 합이 하한보다 작으면 가벼운 쪽만, 상한보다 크면 무거운 쪽만 옮긴다.
             if (combinedWeight < minimumPairWeight) {
                 light++;
             } else if (combinedWeight > maximumPairWeight) {
                 heavy--;
             } else {
+                // [4] 합이 범위 안이면 쌍을 하나 늘리고 양쪽을 모두 옮긴다.
                 pairCount++;
                 light++;
                 heavy--;
             }
         }
+
+        // [5] 두 위치가 만나거나 엇갈리면 쌍의 개수를 반환한다.
         return pairCount;
     }
 

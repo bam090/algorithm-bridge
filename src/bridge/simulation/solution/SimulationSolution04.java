@@ -38,16 +38,21 @@ public final class SimulationSolution04 {
     }
 
     public static int[] solve(long number) {
+        // 한 번 구한 자릿값 합이 바로 다음 변환의 입력이 되어 한 자리까지 이어진다.
+        // 현재 수를 반복해서 바꾸며 회차와 0의 개수를 따로 기억하면 필요한 결과를 잃지 않는다.
         long current = number;
         int rounds = 0;
         int zeroDigits = 0;
 
+        // [1] current가 두 자리 이상인 동안 반복한다.
         while (current >= 10) {
             long remaining = current;
             int digitSum = 0;
 
+            // [2] current의 마지막 자릿값을 하나씩 꺼낸다.
             while (remaining > 0) {
                 int digit = (int) (remaining % 10);
+                // [3] 자릿값은 digitSum에 더하고 0이면 zeroDigits를 늘린다.
                 digitSum += digit;
                 if (digit == 0) {
                     zeroDigits++;
@@ -55,10 +60,12 @@ public final class SimulationSolution04 {
                 remaining /= 10;
             }
 
+            // [4] 자릿값 합을 다음 current로 바꾸고 rounds를 늘린다.
             current = digitSum;
             rounds++;
         }
 
+        // [5] 한 자리 수가 되면 [current, rounds, zeroDigits]를 반환한다.
         return new int[]{(int) current, rounds, zeroDigits};
     }
 }

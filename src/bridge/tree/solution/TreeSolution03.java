@@ -7,21 +7,31 @@ public final class TreeSolution03 {
     }
 
     public static int[] solve(int firstNode, int secondNode) {
+        // 부모 번호는 현재 번호를 2로 나누면 되므로 전체 트리를 만들 필요가 없다.
+        // 더 큰 번호만 부모로 올리면 공통 조상을 건너뛰지 않고 두 번호를 만나게 할 수 있다.
+
+        // [1] 시작 번호를 first와 second에 복사하고 이동 횟수를 0으로 둔다.
         int first = firstNode;
         int second = secondNode;
         int firstMoves = 0;
         int secondMoves = 0;
 
         while (first != second) {
+            // [2] 두 번호가 다르면 더 큰 번호를 2로 나눠 부모 번호로 바꾼다.
             if (first > second) {
                 first /= 2;
+
+                // [3] 첫 번째 번호가 부모로 이동한 횟수를 1 늘린다.
                 firstMoves++;
             } else {
                 second /= 2;
+
+                // [3] 두 번째 번호가 부모로 이동한 횟수를 1 늘린다.
                 secondMoves++;
             }
         }
 
+        // [4] 두 번호가 같아지면 그 번호와 양쪽 이동 횟수를 반환한다.
         return new int[]{first, firstMoves, secondMoves};
     }
 

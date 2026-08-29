@@ -20,9 +20,10 @@ import java.util.Map;
  * 풀이 순서
  * 1. pattern의 값별 개수를 만든다.
  * 2. stream의 첫 창 개수를 만든다.
- * 3. 두 개수표가 같으면 시작 위치를 기록한다.
- * 4. 창을 옮기며 빠지는 값은 줄이고 들어오는 값은 늘린다.
- * 5. 각 위치에서 개수표를 비교하고 모든 시작 위치를 배열로 바꾼다.
+ * 3. 첫 창의 두 개수표가 같으면 시작 위치 1을 기록한다.
+ * 4. 창을 옮길 때 빠지는 값은 줄이고 들어오는 값은 늘린다.
+ * 5. 옮긴 창의 개수표가 같으면 그 시작 위치를 기록한다.
+ * 6. 기록한 모든 시작 위치를 배열로 바꿔 반환한다.
  *
  * 예시 데이터 흐름
  * pattern [1, 2, 2] → {1:1, 2:2}
@@ -44,37 +45,46 @@ public final class HashSolution03 {
     }
 
     public static int[] solve(int[] stream, int[] pattern) {
+        // 비교할 구간의 길이는 고정이고, 이웃한 두 구간은 양끝 값 하나씩만 다르다.
+        // 값별 개수 Map을 창처럼 옮기면 구간 전체를 매번 다시 세지 않아도 된다.
+
         if (pattern.length > stream.length) {
             return new int[0];
         }
 
+        // [1] pattern의 값별 개수를 만든다.
         Map<Integer, Integer> targetCounts = new HashMap<>();
         for (int value : pattern) {
             targetCounts.merge(value, 1, Integer::sum);
         }
 
+        // [2] stream의 첫 창 개수를 만든다.
         Map<Integer, Integer> windowCounts = new HashMap<>();
         for (int index = 0; index < pattern.length; index++) {
             windowCounts.merge(stream[index], 1, Integer::sum);
         }
 
         List<Integer> starts = new ArrayList<>();
+        // [3] 첫 창의 두 개수표가 같으면 시작 위치 1을 기록한다.
         if (targetCounts.equals(windowCounts)) {
             starts.add(1);
         }
 
         for (int right = pattern.length; right < stream.length; right++) {
+            // [4] 창을 옮길 때 빠지는 값은 줄이고 들어오는 값은 늘린다.
             int outgoing = stream[right - pattern.length];
             decreaseCount(windowCounts, outgoing);
 
             int incoming = stream[right];
             windowCounts.merge(incoming, 1, Integer::sum);
 
+            // [5] 옮긴 창의 개수표가 같으면 그 시작 위치를 기록한다.
             if (targetCounts.equals(windowCounts)) {
                 starts.add(right - pattern.length + 2);
             }
         }
 
+        // [6] 기록한 모든 시작 위치를 배열로 바꿔 반환한다.
         int[] answer = new int[starts.size()];
         for (int index = 0; index < starts.size(); index++) {
             answer[index] = starts.get(index);
@@ -83,6 +93,7 @@ public final class HashSolution03 {
     }
 
     private static void decreaseCount(Map<Integer, Integer> counts, int value) {
+        // 창에서 빠진 값은 개수를 줄이고, 0이 되면 Map에서 이름표까지 지운다.
         int nextCount = counts.get(value) - 1;
         if (nextCount == 0) {
             counts.remove(value);

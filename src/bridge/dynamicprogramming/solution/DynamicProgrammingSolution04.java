@@ -9,17 +9,25 @@ public final class DynamicProgrammingSolution04 {
     }
 
     public static int solve(int[][] pointsByStage, boolean[][] canFollow) {
+        // 동적 계획법을 선택한 이유:
+        // 다음 선택은 앞 부품에 따라 달라지므로, 단계와 마지막 부품별 최고 점수를 따로 저장한다.
+
         int stageCount = pointsByStage.length;
         int partCount = pointsByStage[0].length;
+
+        // [1] 모든 상태를 도달 불가를 뜻하는 -1로 채운다.
         long[][] bestScore = new long[stageCount][partCount];
 
         for (long[] row : bestScore) {
             Arrays.fill(row, -1L);
         }
+
+        // [2] 첫 단계는 앞 부품이 없으므로 각 부품의 점수를 그대로 저장한다.
         for (int part = 0; part < partCount; part++) {
             bestScore[0][part] = pointsByStage[0][part];
         }
 
+        // [3] 현재 부품마다 canFollow[앞 부품][현재 부품]이 true인 앞 상태만 확인한다.
         for (int stage = 1; stage < stageCount; stage++) {
             for (int currentPart = 0; currentPart < partCount; currentPart++) {
                 long bestPrevious = -1L;
@@ -32,6 +40,8 @@ public final class DynamicProgrammingSolution04 {
                         );
                     }
                 }
+
+                // [4] 도달 가능한 앞 상태 중 최고 총점에 현재 점수를 더해 현재 상태를 저장한다.
                 if (bestPrevious >= 0L) {
                     bestScore[stage][currentPart]
                             = bestPrevious + pointsByStage[stage][currentPart];
@@ -39,6 +49,7 @@ public final class DynamicProgrammingSolution04 {
             }
         }
 
+        // [5] 마지막 단계의 부품을 작은 번호부터 확인하며 더 큰 총점의 번호를 저장한다.
         int answerPart = -1;
         long answerScore = -1L;
         for (int part = 0; part < partCount; part++) {
@@ -48,6 +59,8 @@ public final class DynamicProgrammingSolution04 {
                 answerPart = part;
             }
         }
+
+        // [6] 도달 가능한 마지막 상태가 없으면 -1, 있으면 저장한 부품 번호를 반환한다.
         return answerPart;
     }
 

@@ -7,10 +7,20 @@ public final class ArraySolution03 {
     }
 
     public static int[] solve(int[] values) {
+        // 인덱스로 한 번 순회하는 이유:
+        // 각 변화량은 나란한 현재 값과 이전 값만 있으면 계산할 수 있고,
+        // 결과 길이도 미리 알 수 있어 새 배열에 바로 저장하면 된다.
+
+        // [1] 입력보다 길이가 1 작은 changes를 만든다.
         int[] changes = new int[values.length - 1];
+
+        // [2] 이전 값이 존재하는 입력 인덱스 1부터 순회한다.
         for (int i = 1; i < values.length; i++) {
+            // [3] values[i] - values[i - 1]을 changes[i - 1]에 저장한다.
             changes[i - 1] = values[i] - values[i - 1];
         }
+
+        // [4] changes를 반환한다.
         return changes;
     }
 

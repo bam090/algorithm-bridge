@@ -38,10 +38,13 @@ public final class SimulationSolution03 {
     }
 
     public static long[] solve(int[][] grid) {
+        // 바깥 테두리를 끝낼 때마다 네 경계가 모두 한 칸 안으로 이동한다.
+        // 위·아래·왼쪽·오른쪽을 따로 기억하면 남은 겹과 중복되는 칸을 정확히 구분할 수 있다.
         if (grid.length == 0) {
             return new long[0];
         }
 
+        // [1] 격자의 짧은 쪽 길이로 전체 겹 수를 계산한다.
         int rowCount = grid.length;
         int columnCount = grid[0].length;
         int layerCount = (Math.min(rowCount, columnCount) + 1) / 2;
@@ -56,23 +59,28 @@ public final class SimulationSolution03 {
         while (top <= bottom && left <= right) {
             long sum = 0;
 
+            // [2] 현재 윗줄을 왼쪽부터 오른쪽까지 더한다.
             for (int column = left; column <= right; column++) {
                 sum += grid[top][column];
             }
+            // [3] 오른쪽 줄은 윗줄 다음 행부터 아래까지 더한다.
             for (int row = top + 1; row <= bottom; row++) {
                 sum += grid[row][right];
             }
+            // [4] 위와 아래가 다를 때만 아랫줄을 오른쪽에서 왼쪽으로 더한다.
             if (top < bottom) {
                 for (int column = right - 1; column >= left; column--) {
                     sum += grid[bottom][column];
                 }
             }
+            // [5] 왼쪽과 오른쪽이 다를 때만 왼쪽 줄의 남은 칸을 아래에서 위로 더한다.
             if (left < right) {
                 for (int row = bottom - 1; row > top; row--) {
                     sum += grid[row][left];
                 }
             }
 
+            // [6] 합을 저장하고 네 경계를 한 칸 안으로 이동한다.
             answer[layer++] = sum;
             top++;
             bottom--;

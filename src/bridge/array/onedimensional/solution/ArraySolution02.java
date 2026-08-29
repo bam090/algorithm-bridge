@@ -7,12 +7,22 @@ public final class ArraySolution02 {
     }
 
     public static int solve(int[] values, int minimum, int maximum) {
+        // 한 번 순회하는 이유:
+        // 모든 값 가운데 범위 안에 있는 값의 개수만 필요하므로,
+        // 값을 한 번씩 확인하면서 count만 늘리면 된다.
+
+        // [1] count를 0으로 시작한다.
         int count = 0;
+
+        // [2] 배열의 각 value를 읽는다.
         for (int value : values) {
+            // [3] value >= minimum && value <= maximum이면 count를 1 늘린다.
             if (value >= minimum && value <= maximum) {
                 count++;
             }
         }
+
+        // [4] 순회가 끝난 뒤 count를 반환한다.
         return count;
     }
 

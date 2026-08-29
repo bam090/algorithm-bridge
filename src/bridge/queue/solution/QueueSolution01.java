@@ -10,22 +10,31 @@ public final class QueueSolution01 {
     }
 
     public static int[] solve(int[] order) {
+        // Queue를 선택한 이유:
+        // 문제는 맨 앞 값을 꺼내 맨 뒤로 보내야 하므로,
+        // 앞에서 꺼내고 뒤에 넣는 Queue의 동작과 바로 맞는다.
+
+        // [1] order의 값을 앞에서부터 큐에 넣는다.
         Queue<Integer> queue = new ArrayDeque<>(order.length);
         for (int number : order) {
             queue.offer(number);
         }
 
+        // [2] 큐가 비어 있지 않으면 맨 앞 값을 꺼내 맨 뒤에 넣는다.
         if (!queue.isEmpty()) {
             int first = queue.poll();
             queue.offer(first);
         }
 
+        // [3] 회전한 큐를 앞에서부터 읽어 새 결과 배열에 담는다.
         int[] result = new int[queue.size()];
         int index = 0;
         for (int number : queue) {
             result[index] = number;
             index++;
         }
+
+        // [4] 결과 배열을 반환한다.
         return result;
     }
 

@@ -11,15 +11,23 @@ public final class StackSolution03 {
     }
 
     public static int[] solve(int[] operations) {
+        // 나머지 연산과 Stack을 선택한 이유:
+        // 모든 시작점에서 나머지 연산으로 한 바퀴를 읽을 수 있고,
+        // 최근에 올린 필름부터 치워야 하므로 시작점마다 새 Stack으로 검증한다.
+
         int[] requiredHeights = new int[operations.length];
         Arrays.fill(requiredHeights, -1);
 
+        // [1] start를 0부터 마지막 인덱스까지 고른다.
         for (int start = 0; start < operations.length; start++) {
+            // [2] 각 start마다 빈 스택과 최대 높이 0으로 시작한다.
             Deque<Integer> films = new ArrayDeque<>();
             int maximumHeight = 0;
             boolean valid = true;
 
+            // [3] (start + offset) % length 위치의 기록을 정확히 length개 확인한다.
             for (int offset = 0; offset < operations.length; offset++) {
+                // [4] 양수는 올리고 최대 높이를 갱신하며, 음수는 최근 번호와 맞는지 확인한다.
                 int operation = operations[(start + offset) % operations.length];
                 if (operation > 0) {
                     films.push(operation);
@@ -35,6 +43,7 @@ public final class StackSolution03 {
                 films.pop();
             }
 
+            // [5] 실패하지 않았고 스택도 비었으면 requiredHeights[start]를 최대 높이로 바꾼다.
             if (valid && films.isEmpty()) {
                 requiredHeights[start] = maximumHeight;
             }

@@ -40,15 +40,23 @@ public final class HashSolution02 {
     }
 
     public static int solve(String[] expectedCodes, String[] actualCodes) {
+        // 같은 코드가 여러 번 나올 수 있으므로 존재 여부가 아니라 개수를 기억해야 한다.
+        // Map 하나에 준비 수는 더하고 실제 수는 빼면 코드별 남은 차이를 바로 모을 수 있다.
+
+        // [1] 코드별 차이를 저장할 Map을 만든다.
         Map<String, Integer> differences = new HashMap<>();
 
+        // [2] 준비 목록의 각 코드는 1씩 더한다.
         for (String code : expectedCodes) {
             differences.merge(code, 1, Integer::sum);
         }
+
+        // [3] 실제 목록의 각 코드는 1씩 뺀다.
         for (String code : actualCodes) {
             differences.merge(code, -1, Integer::sum);
         }
 
+        // [4] 마지막에 남은 모든 값의 절댓값을 더한다.
         int unmatchedCount = 0;
         for (int difference : differences.values()) {
             unmatchedCount += Math.abs(difference);

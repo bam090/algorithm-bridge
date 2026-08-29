@@ -13,6 +13,10 @@ public final class GraphSolution06 {
     }
 
     public static int solve(int nodeCount, int[][] undirectedLinks, int[] supplyNodes) {
+        // 트리의 통로 하나를 막으면 자식 쪽과 나머지 쪽 두 묶음으로 정확히 나뉜다.
+        // DFS 순서를 거꾸로 읽어 상자 수를 부모로 올리면 통로를 하나씩 실제로 끊어 볼 필요가 없다.
+
+        // [1] 양방향 인접 리스트를 만들고 1번을 임시 뿌리로 정한다.
         List<List<Integer>> graph = new ArrayList<>(nodeCount);
         for (int node = 0; node < nodeCount; node++) {
             graph.add(new ArrayList<>());
@@ -24,6 +28,7 @@ public final class GraphSolution06 {
             graph.get(second).add(first);
         }
 
+        // [2] 반복 DFS로 각 정점의 부모와 방문 순서를 기록한다.
         int[] parent = new int[nodeCount];
         Arrays.fill(parent, -2);
         int[] visitOrder = new int[nodeCount];
@@ -43,6 +48,7 @@ public final class GraphSolution06 {
             }
         }
 
+        // [3] 비상 상자가 있는 정점의 아래쪽 상자 수를 1로 시작한다.
         int[] subtreeSupplyCount = new int[nodeCount];
         for (int supplyNode : supplyNodes) {
             subtreeSupplyCount[supplyNode - 1] = 1;
@@ -50,13 +56,19 @@ public final class GraphSolution06 {
 
         int totalSupplyCount = supplyNodes.length;
         int validBoundaryCount = 0;
+
+        // [4] 방문 순서를 거꾸로 확인하며 자식 쪽 수와 전체에서 뺀 반대쪽 수를 구한다.
         for (int index = orderSize - 1; index >= 1; index--) {
             int child = visitOrder[index];
             int childSide = subtreeSupplyCount[child];
             int otherSide = totalSupplyCount - childSide;
+
+            // [5] 두 쪽에 상자가 모두 있으면 유효한 경계 수를 1 늘린다.
             if (childSide > 0 && otherSide > 0) {
                 validBoundaryCount++;
             }
+
+            // [6] 경계 조건과 관계없이 자식 쪽 상자 수를 부모에게 더한다.
             subtreeSupplyCount[parent[child]] += childSide;
         }
         return validBoundaryCount;
@@ -80,7 +92,8 @@ public final class GraphSolution06 {
      * 2. 반복 DFS로 각 정점의 부모와 방문 순서를 기록한다.
      * 3. 비상 상자가 있는 정점의 아래쪽 상자 수를 1로 시작한다.
      * 4. 방문 순서를 거꾸로 확인하며 자식 쪽 수와 전체에서 뺀 반대쪽 수를 구한다.
-     * 5. 두 수가 모두 1 이상이면 경계 수를 늘리고 자식 수를 부모에게 더한다.
+     * 5. 두 쪽에 상자가 모두 있으면 유효한 경계 수를 1 늘린다.
+     * 6. 경계 조건과 관계없이 자식 쪽 상자 수를 부모에게 더한다.
      *
      * 예시 데이터 흐름
      * - 전체 비상 상자는 4, 5, 7번의 3개다.

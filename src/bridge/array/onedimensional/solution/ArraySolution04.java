@@ -7,6 +7,11 @@ public final class ArraySolution04 {
     }
 
     public static int[] solve(int[] values, int minimum) {
+        // 두 번 순회하는 이유:
+        // 조건을 통과할 값의 수를 보기 전에는 고정 길이 배열을 만들 수 없으므로,
+        // 개수를 먼저 센 뒤 두 번째 순회에서 원래 순서대로 결과를 채운다.
+
+        // [1] values를 순회해 minimum 이상인 값의 개수를 센다.
         int resultLength = 0;
         for (int value : values) {
             if (value >= minimum) {
@@ -14,14 +19,20 @@ public final class ArraySolution04 {
             }
         }
 
+        // [2] 그 개수로 result를 만든다.
         int[] result = new int[resultLength];
+
+        // [3] result의 다음 빈칸을 0으로 정하고 values를 다시 순회한다.
         int resultIndex = 0;
         for (int value : values) {
             if (value >= minimum) {
+                // [4] 조건을 통과한 값을 넣고 resultIndex를 1 늘린다.
                 result[resultIndex] = value;
                 resultIndex++;
             }
         }
+
+        // [5] result를 반환한다.
         return result;
     }
 

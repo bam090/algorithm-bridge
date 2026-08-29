@@ -10,13 +10,22 @@ public final class SetSolution01 {
     }
 
     public static int[] solve(int[] badgeCodes, int slotLimit) {
+        // 같은 코드는 한 칸만 채우므로 전체 개수가 아니라 서로 다른 코드 수가 필요하다.
+        // HashSet은 중복을 한 번만 남겨 보드에 놓을 수 있는 종류 수를 바로 알려 준다.
+
+        // [1] badgeCodes의 모든 값을 HashSet에 넣는다.
         Set<Integer> uniqueCodes = new HashSet<>();
         for (int code : badgeCodes) {
             uniqueCodes.add(code);
         }
 
+        // [2] 고유 코드 수와 slotLimit 중 작은 값을 채운 칸 수로 정한다.
         int filledSlots = Math.min(uniqueCodes.size(), slotLimit);
+
+        // [3] slotLimit에서 채운 칸 수를 빼 빈 칸 수를 구한다.
         int emptySlots = slotLimit - filledSlots;
+
+        // [4] 두 값을 순서대로 담은 배열을 반환한다.
         return new int[]{filledSlots, emptySlots};
     }
 

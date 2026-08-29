@@ -11,6 +11,10 @@ public final class GraphSolution03 {
     }
 
     public static int[][] solve(int[][] grid, int startRow, int startColumn) {
+        // 열린 칸의 상하좌우 이동 비용이 모두 1이므로 가까운 칸부터 보는 BFS가 최소 거리에 맞다.
+        // 별도 거리표를 방문 표시로 함께 쓰면 원본을 지키면서 벽과 미도달 칸도 구분할 수 있다.
+
+        // [1] 모든 거리 칸을 -1로 시작하고 입력의 벽 위치만 -2로 바꾼다.
         int rowCount = grid.length;
         int columnCount = grid[0].length;
         int[][] distance = new int[rowCount][columnCount];
@@ -24,6 +28,8 @@ public final class GraphSolution03 {
         }
 
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        // [2] 시작 칸의 거리를 0으로 기록하고 큐에 넣는다.
         Deque<Integer> queue = new ArrayDeque<>();
         distance[startRow][startColumn] = 0;
         queue.addLast(startRow * columnCount + startColumn);
@@ -33,17 +39,22 @@ public final class GraphSolution03 {
             int row = position / columnCount;
             int column = position % columnCount;
 
+            // [3] 현재 칸에서 네 방향의 다음 행과 열을 만든다.
             for (int[] direction : directions) {
                 int nextRow = row + direction[0];
                 int nextColumn = column + direction[1];
                 boolean inside = 0 <= nextRow && nextRow < rowCount
                         && 0 <= nextColumn && nextColumn < columnCount;
+
+                // [4] 범위 안이고 거리값이 -1인 칸에 현재 거리 + 1을 기록해 큐에 넣는다.
                 if (inside && distance[nextRow][nextColumn] == -1) {
                     distance[nextRow][nextColumn] = distance[row][column] + 1;
                     queue.addLast(nextRow * columnCount + nextColumn);
                 }
             }
         }
+
+        // [5] 큐가 비면 벽·미도달·최소 거리가 모두 표시된 표를 반환한다.
         return distance;
     }
 

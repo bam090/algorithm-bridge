@@ -41,17 +41,24 @@ public final class SortingSolution05 {
     }
 
     public static int solve(int[] inspections) {
+        // 모든 두 점검의 최소 차이가 필요하지만 입력은 최대 100_000개다.
+        // 복사본을 정렬하면 원본을 지키면서 가장 가까운 두 값만 이웃으로 비교할 수 있다.
+        // [1] 점검이 두 개보다 적으면 -1을 반환한다.
         if (inspections.length < 2) {
             return -1;
         }
 
+        // [2] 입력 배열을 복사해 오름차순으로 정렬한다.
         int[] sorted = Arrays.copyOf(inspections, inspections.length);
         Arrays.sort(sorted);
 
+        // [3] 두 번째 값부터 확인하며 현재 값과 바로 앞 값의 차이를 계산한다.
         int minimumGap = sorted[1] - sorted[0];
         for (int index = 2; index < sorted.length; index++) {
             int gap = sorted[index] - sorted[index - 1];
+            // [4] 지금까지 본 가장 작은 차이를 갱신한다.
             minimumGap = Math.min(minimumGap, gap);
+            // [5] 차이가 0이면 더 작아질 수 없으므로 바로 반환한다.
             if (minimumGap == 0) {
                 return 0;
             }

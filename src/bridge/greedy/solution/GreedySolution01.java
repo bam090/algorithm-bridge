@@ -9,11 +9,16 @@ public final class GreedySolution01 {
     }
 
     public static int[] solve(int[][] reservations) {
+        // 그리디를 선택한 이유:
+        // 모든 예약의 가치는 같으므로, 가장 빨리 끝나는 예약을 골라야 뒤에 가장 많은 시간이 남는다.
+
+        // [1] 원본의 각 행을 복사한다.
         int[][] ordered = new int[reservations.length][];
         for (int i = 0; i < reservations.length; i++) {
             ordered[i] = reservations[i].clone();
         }
 
+        // [2] 종료 시각, 시작 시각, 예약 번호 순으로 복사본을 정렬한다.
         Arrays.sort(ordered, (left, right) -> {
             int byEnd = Integer.compare(left[2], right[2]);
             if (byEnd != 0) {
@@ -30,12 +35,15 @@ public final class GreedySolution01 {
         int selectedCount = 0;
         int lastEnd = -1;
 
+        // [3] 마지막 종료 시각 뒤에 시작하는 예약만 고르고 종료 시각을 갱신한다.
         for (int[] reservation : ordered) {
             if (reservation[1] >= lastEnd) {
                 selectedIds[selectedCount++] = reservation[0];
                 lastEnd = reservation[2];
             }
         }
+
+        // [4] 고른 예약 번호만 진행 순서대로 반환한다.
         return Arrays.copyOf(selectedIds, selectedCount);
     }
 

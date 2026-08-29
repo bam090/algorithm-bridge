@@ -10,22 +10,33 @@ public final class StackSolution01 {
     }
 
     public static int solve(int[] events) {
+        // Stack을 선택한 이유:
+        // 꺼낼 때 가장 최근에 올린 상자 번호가 필요하므로,
+        // 마지막에 넣은 값을 먼저 확인하고 꺼내는 Stack의 동작과 맞는다.
+
         Deque<Integer> stackedBoxes = new ArrayDeque<>();
 
         for (int index = 0; index < events.length; index++) {
             int event = events[index];
             if (event > 0) {
+                // [1] 양수 번호를 만나면 스택에 올린다.
                 stackedBoxes.push(event);
                 continue;
             }
 
+            // [2] 음수 번호를 꺼낼 상자 번호로 바꾼다.
             int boxNumber = -event;
+
+            // [3] 스택이 비었거나 맨 위 번호가 다르면 현재 위치를 반환한다.
             if (stackedBoxes.isEmpty() || stackedBoxes.peek() != boxNumber) {
                 return index + 1;
             }
+
+            // [4] 번호가 같으면 맨 위 번호를 꺼낸다.
             stackedBoxes.pop();
         }
 
+        // [5] 끝에서 스택이 비면 0, 남아 있으면 events.length + 1을 반환한다.
         return stackedBoxes.isEmpty() ? 0 : events.length + 1;
     }
 
@@ -43,8 +54,8 @@ public final class StackSolution01 {
      *
      * 풀이 순서
      * 1. 양수 번호를 만나면 스택에 올린다.
-     * 2. 음수 번호를 만나면 스택이 비었는지 먼저 확인한다.
-     * 3. 맨 위 번호가 꺼낼 번호와 다르면 현재 위치를 반환한다.
+     * 2. 음수 번호를 꺼낼 상자 번호로 바꾼다.
+     * 3. 스택이 비었거나 맨 위 번호가 다르면 현재 위치를 반환한다.
      * 4. 번호가 같으면 맨 위 번호를 꺼낸다.
      * 5. 끝에서 스택이 비면 0, 남아 있으면 events.length + 1을 반환한다.
      *

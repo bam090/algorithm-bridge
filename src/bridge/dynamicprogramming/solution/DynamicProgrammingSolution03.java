@@ -9,16 +9,23 @@ public final class DynamicProgrammingSolution03 {
     }
 
     public static int solve(int[][] warehouse) {
+        // 동적 계획법을 선택한 이유:
+        // 각 칸의 경로 수는 위쪽과 왼쪽 칸의 결과로 만들므로, 표에 저장해 다음 칸에서 다시 쓴다.
+
+        // [1] 행이나 열이 없으면 0을 반환한다.
         if (warehouse.length == 0 || warehouse[0].length == 0) {
             return 0;
         }
 
         int rowCount = warehouse.length;
         int columnCount = warehouse[0].length;
+
+        // [2] 출발 칸이나 도착 칸이 장애물이면 0을 반환한다.
         if (warehouse[0][0] == 1 || warehouse[rowCount - 1][columnCount - 1] == 1) {
             return 0;
         }
 
+        // [3] 출발 칸까지 오는 한 가지 경로를 ways[0][0]에 저장한다.
         long[][] ways = new long[rowCount][columnCount];
         ways[0][0] = 1L;
 
@@ -28,11 +35,16 @@ public final class DynamicProgrammingSolution03 {
                     continue;
                 }
 
+                // [4] 각 열린 칸에서 위쪽 경로 수와 왼쪽 경로 수를 읽는다.
                 long fromTop = row > 0 ? ways[row - 1][column] : 0L;
                 long fromLeft = column > 0 ? ways[row][column - 1] : 0L;
+
+                // [5] 두 경로 수를 더해 1,000,000,007로 나눈 값을 현재 칸에 저장한다.
                 ways[row][column] = (fromTop + fromLeft) % MODULO;
             }
         }
+
+        // [6] 도착 칸의 경로 수를 반환한다.
         return (int) ways[rowCount - 1][columnCount - 1];
     }
 
@@ -52,8 +64,9 @@ public final class DynamicProgrammingSolution03 {
      * 1. 행이나 열이 없으면 0을 반환한다.
      * 2. 출발 칸이나 도착 칸이 장애물이면 0을 반환한다.
      * 3. 출발 칸까지 오는 한 가지 경로를 ways[0][0]에 저장한다.
-     * 4. 각 열린 칸에서 위쪽 경로 수와 왼쪽 경로 수를 더한다.
-     * 5. 값을 저장할 때 1,000,000,007로 나누고 도착 칸의 값을 반환한다.
+     * 4. 각 열린 칸에서 위쪽 경로 수와 왼쪽 경로 수를 읽는다.
+     * 5. 두 경로 수를 더해 1,000,000,007로 나눈 값을 현재 칸에 저장한다.
+     * 6. 도착 칸의 경로 수를 반환한다.
      *
      * 예시 데이터 흐름
      * - 첫 행은 오른쪽으로만 갈 수 있어 장애물 전까지 각 칸의 값이 1이다.

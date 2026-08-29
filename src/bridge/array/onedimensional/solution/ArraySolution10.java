@@ -7,14 +7,25 @@ public final class ArraySolution10 {
     }
 
     public static int solve(int[] values, int maxDifference) {
+        // 모든 위치 쌍을 직접 확인하는 이유:
+        // 배열 길이가 최대 300이라 각 쌍을 하나씩 확인해도 충분하다.
+        // 두 번째 위치를 i + 1부터 고르면 자기 자신과 순서만 바뀐 같은 쌍을 빼고 셀 수 있다.
+
+        // [1] count를 0으로 시작한다.
         int count = 0;
+
+        // [2] 첫 번째 위치 i를 앞에서부터 고른다.
         for (int i = 0; i < values.length; i++) {
+            // [3] 두 번째 위치 j를 i + 1부터 배열 끝까지 고른다.
             for (int j = i + 1; j < values.length; j++) {
+                // [4] 두 값의 차이의 절댓값이 maxDifference 이하면 count를 늘린다.
                 if (Math.abs(values[i] - values[j]) <= maxDifference) {
                     count++;
                 }
             }
         }
+
+        // [5] 모든 쌍을 확인한 뒤 count를 반환한다.
         return count;
     }
 

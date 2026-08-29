@@ -7,6 +7,11 @@ public final class ArraySolution09 {
     }
 
     public static int[] solve(int[] values) {
+        // 앞부분을 직접 확인하는 이유:
+        // 처음 등장한 순서를 지켜야 하므로 값을 정렬할 수 없다.
+        // 배열 길이가 작아 앞에 같은 값이 있는지 확인하고, 개수를 센 뒤 결과를 채울 수 있다.
+
+        // [2] isFirstOccurrence가 true인 값의 개수를 센다.
         int uniqueCount = 0;
         for (int i = 0; i < values.length; i++) {
             if (isFirstOccurrence(values, i)) {
@@ -14,7 +19,10 @@ public final class ArraySolution09 {
             }
         }
 
+        // [3] 센 개수와 같은 길이의 result를 만든다.
         int[] result = new int[uniqueCount];
+
+        // [4] 배열을 다시 확인해 isFirstOccurrence가 true인 값만 result의 다음 칸에 넣는다.
         int resultIndex = 0;
         for (int i = 0; i < values.length; i++) {
             if (isFirstOccurrence(values, i)) {
@@ -22,10 +30,13 @@ public final class ArraySolution09 {
                 resultIndex++;
             }
         }
+
+        // [5] result를 반환한다.
         return result;
     }
 
     private static boolean isFirstOccurrence(int[] values, int index) {
+        // [1] 현재 인덱스보다 앞에 같은 값이 있으면 false, 없으면 true를 반환한다.
         for (int previous = 0; previous < index; previous++) {
             if (values[previous] == values[index]) {
                 return false;
@@ -48,10 +59,10 @@ public final class ArraySolution09 {
      * - 값의 범위와 배열 길이가 작으므로 앞부분을 직접 확인하는 방법으로 배열 연습에 집중한다.
      *
      * 풀이 순서
-     * 1. 각 인덱스에서 앞에 같은 값이 있는지 확인해 처음 등장한 값의 개수를 센다.
-     * 2. 센 개수와 같은 길이의 result를 만든다.
-     * 3. 배열을 다시 앞에서부터 확인한다.
-     * 4. 앞에 같은 값이 없는 값만 result의 다음 칸에 넣는다.
+     * 1. 현재 인덱스보다 앞에 같은 값이 있으면 false, 없으면 true를 반환한다.
+     * 2. isFirstOccurrence가 true인 값의 개수를 센다.
+     * 3. 센 개수와 같은 길이의 result를 만든다.
+     * 4. 배열을 다시 확인해 isFirstOccurrence가 true인 값만 result의 다음 칸에 넣는다.
      * 5. result를 반환한다.
      *
      * 예시 데이터 흐름

@@ -14,6 +14,10 @@ public final class SetSolution04 {
             int[] firstIds,
             int[] secondIds
     ) {
+        // LINK와 AUDIT이 섞여 있으므로 각 요청 시점의 전체 연결 그룹을 바로 알아야 한다.
+        // 유니온-파인드는 LINK로 대표를 합치고 AUDIT에서 두 최종 대표를 곧바로 비교한다.
+
+        // [1] 각 장비를 자기 대표와 크기 1인 그룹으로 시작한다.
         int[] parent = new int[deviceCount];
         int[] groupSize = new int[deviceCount];
         for (int i = 0; i < deviceCount; i++) {
@@ -27,15 +31,21 @@ public final class SetSolution04 {
         for (int i = 0; i < actions.length; i++) {
             if ("LINK".equals(actions[i])) {
                 union(parent, groupSize, firstIds[i], secondIds[i]);
-            } else if (find(parent, firstIds[i]) != find(parent, secondIds[i])) {
+            }
+            // [3] AUDIT 요청이면 두 최종 대표를 비교한다.
+            else if (find(parent, firstIds[i]) != find(parent, secondIds[i])) {
+                // [4] 대표가 다르면 현재 인덱스에 1을 더한 요청 번호를 임시 결과에 기록한다.
                 failedRequests[failedCount] = i + 1;
                 failedCount++;
             }
         }
+
+        // [5] 실제 실패 개수만큼 복사한 새 배열을 반환한다.
         return Arrays.copyOf(failedRequests, failedCount);
     }
 
     private static int find(int[] parent, int value) {
+        // 지나온 장비의 부모를 최종 대표로 바꿔 다음 조회 경로를 줄인다.
         if (parent[value] != value) {
             parent[value] = find(parent, parent[value]);
         }
@@ -43,6 +53,7 @@ public final class SetSolution04 {
     }
 
     private static void union(int[] parent, int[] groupSize, int first, int second) {
+        // [2] LINK 요청의 두 최종 대표를 찾아 서로 다를 때 합친다.
         int firstRoot = find(parent, first);
         int secondRoot = find(parent, second);
         if (firstRoot == secondRoot) {

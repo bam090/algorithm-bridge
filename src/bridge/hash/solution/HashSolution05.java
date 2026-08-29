@@ -51,6 +51,10 @@ public final class HashSolution05 {
             int[] urgency,
             int perTeamLimit
     ) {
+        // 팀 순서와 팀 안의 작업 순서는 서로 다른 기준으로 정해야 한다.
+        // Map으로 팀별 합계와 작업 위치를 모은 뒤 두 목록을 따로 정렬하면 입력 배열을 바꾸지 않는다.
+
+        // [1] 팀별 전체 예상 시간을 더하고 작업의 배열 위치를 모은다.
         Map<String, Integer> totalMinutes = new HashMap<>();
         Map<String, List<Integer>> taskIndexes = new HashMap<>();
 
@@ -60,6 +64,7 @@ public final class HashSolution05 {
             taskIndexes.computeIfAbsent(team, ignored -> new ArrayList<>()).add(index);
         }
 
+        // [2] 팀을 전체 시간 오름차순, 팀 이름 오름차순으로 정렬한다.
         List<String> teamOrder = new ArrayList<>(taskIndexes.keySet());
         teamOrder.sort((left, right) -> {
             int byTotalMinutes = Integer.compare(totalMinutes.get(left), totalMinutes.get(right));
@@ -72,14 +77,18 @@ public final class HashSolution05 {
         List<String> selectedTaskIds = new ArrayList<>();
         for (String team : teamOrder) {
             List<Integer> indexes = taskIndexes.get(team);
+
+            // [3] 각 팀의 작업을 긴급도 내림차순, 시간 오름차순, 작업 ID 오름차순으로 정렬한다.
             indexes.sort((left, right) -> compareTasks(left, right, taskIds, minutes, urgency));
 
+            // [4] 팀마다 제한 개수까지 작업 ID를 결과 목록에 담는다.
             int selectedCount = Math.min(perTeamLimit, indexes.size());
             for (int index = 0; index < selectedCount; index++) {
                 selectedTaskIds.add(taskIds[indexes.get(index)]);
             }
         }
 
+        // [5] 결과 목록을 String 배열로 바꾼다.
         return selectedTaskIds.toArray(String[]::new);
     }
 
@@ -90,6 +99,7 @@ public final class HashSolution05 {
             int[] minutes,
             int[] urgency
     ) {
+        // 앞의 비교 기준이 같을 때만 다음 기준을 확인한다.
         int byUrgency = Integer.compare(urgency[right], urgency[left]);
         if (byUrgency != 0) {
             return byUrgency;

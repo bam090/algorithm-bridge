@@ -13,6 +13,10 @@ public final class GraphSolution02 {
     }
 
     public static int[] solve(int nodeCount, int[][] undirectedEdges, int startNode) {
+        // 모든 통로의 비용이 1이므로 가까운 지점부터 확인해야 첫 기록이 최소 거리가 된다.
+        // Queue를 쓰는 BFS는 거리가 같은 지점을 차례로 처리해 이 이동 방식과 바로 맞는다.
+
+        // [1] 각 양방향 간선을 두 정점의 인접 리스트에 넣는다.
         List<List<Integer>> graph = new ArrayList<>(nodeCount);
         for (int node = 0; node < nodeCount; node++) {
             graph.add(new ArrayList<>());
@@ -24,6 +28,7 @@ public final class GraphSolution02 {
             graph.get(second).add(first);
         }
 
+        // [2] 거리 배열을 -1로 채우고 출발 지점만 0으로 바꿔 큐에 넣는다.
         int[] distance = new int[nodeCount];
         Arrays.fill(distance, -1);
 
@@ -33,14 +38,18 @@ public final class GraphSolution02 {
         queue.addLast(startIndex);
 
         while (!queue.isEmpty()) {
+            // [3] 큐 앞 지점을 꺼내 아직 거리가 없는 이웃을 찾는다.
             int current = queue.removeFirst();
             for (int next : graph.get(current)) {
+                // [4] 이웃에 현재 거리 + 1을 기록한 즉시 큐 뒤에 넣는다.
                 if (distance[next] == -1) {
                     distance[next] = distance[current] + 1;
                     queue.addLast(next);
                 }
             }
         }
+
+        // [5] 큐가 비면 지점 번호 순서의 거리 배열을 반환한다.
         return distance;
     }
 

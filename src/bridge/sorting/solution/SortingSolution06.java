@@ -48,14 +48,19 @@ public final class SortingSolution06 {
     }
 
     public static String[] solve(String[] groupRecords) {
+        // 기록 안의 그룹 이름과 항목을 먼저 나눠야 처리 순서를 비교할 수 있다.
+        // 두 기준으로 정렬한 뒤 Set을 쓰면 앞에서 본 항목인지 바로 구분할 수 있다.
         Group[] groups = new Group[groupRecords.length];
+        // [1] 각 문자열을 콜론에서 나눠 그룹 이름과 항목 부분을 얻는다.
         for (int index = 0; index < groupRecords.length; index++) {
             int separator = groupRecords[index].indexOf(':');
             String name = groupRecords[index].substring(0, separator);
+            // [2] 항목 부분을 쉼표에서 나눠 Group으로 저장한다.
             String[] items = groupRecords[index].substring(separator + 1).split(",");
             groups[index] = new Group(name, items);
         }
 
+        // [3] Group을 항목 수 오름차순, 그룹 이름 사전순으로 정렬한다.
         Arrays.sort(groups, (left, right) -> {
             int byItemCount = Integer.compare(left.items().length, right.items().length);
             if (byItemCount != 0) {
@@ -64,6 +69,7 @@ public final class SortingSolution06 {
             return left.name().compareTo(right.name());
         });
 
+        // [4] 작은 그룹부터 확인하며 Set에 처음 추가된 항목 수를 센다.
         Set<String> seen = new HashSet<>();
         String[] answer = new String[groups.length];
         for (int index = 0; index < groups.length; index++) {
@@ -73,6 +79,7 @@ public final class SortingSolution06 {
                     newItemCount++;
                 }
             }
+            // [5] "그룹이름=새항목수"를 결과 배열에 저장한다.
             answer[index] = groups[index].name() + "=" + newItemCount;
         }
         return answer;

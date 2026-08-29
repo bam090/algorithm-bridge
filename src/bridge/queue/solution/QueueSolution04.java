@@ -10,6 +10,11 @@ public final class QueueSolution04 {
     }
 
     public static int[] solve(int[] firstLine, int[] secondLine, int[] inspectionPlan) {
+        // Queue 두 개를 선택한 이유:
+        // 각 검사대의 내부 순서를 바꿀 수 없고 맨 앞 시료만 꺼낼 수 있으므로,
+        // 두 Queue의 맨 앞만 비교하면 필요한 시료를 꺼낼 수 있는지 바로 판단할 수 있다.
+
+        // [1] firstLine과 secondLine을 각각 별도의 큐에 넣는다.
         Queue<Integer> firstQueue = new ArrayDeque<>(firstLine.length);
         Queue<Integer> secondQueue = new ArrayDeque<>(secondLine.length);
 
@@ -22,17 +27,23 @@ public final class QueueSolution04 {
 
         int[] sources = new int[inspectionPlan.length];
         for (int i = 0; i < inspectionPlan.length; i++) {
+            // [2] inspectionPlan의 다음 시료 번호를 확인한다.
             int neededId = inspectionPlan[i];
             if (!firstQueue.isEmpty() && firstQueue.peek() == neededId) {
+                // [3] 첫 번째 큐의 맨 앞과 같으면 꺼내고 결과에 1을 기록한다.
                 firstQueue.poll();
                 sources[i] = 1;
             } else if (!secondQueue.isEmpty() && secondQueue.peek() == neededId) {
+                // [4] 두 번째 큐의 맨 앞과 같으면 꺼내고 결과에 2를 기록한다.
                 secondQueue.poll();
                 sources[i] = 2;
             } else {
+                // [5] 둘 다 아니면 실패 결과를 반환한다.
                 return new int[]{-1};
             }
         }
+
+        // [6] 계획을 모두 처리하면 출처 배열을 반환한다.
         return sources;
     }
 

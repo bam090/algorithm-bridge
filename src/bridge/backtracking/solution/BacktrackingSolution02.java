@@ -7,6 +7,8 @@ public final class BacktrackingSolution02 {
     }
 
     public static int solve(int[] factorCards, int target) {
+        // 고른 순서만 다른 조합은 한 번만 세고, 목표를 넘는 선택은 더 볼 필요가 없다.
+        // 다음 시작 위치와 현재 곱을 재귀에 넘기면 두 조건을 함께 지킬 수 있다.
         return countCombinations(factorCards, target, 0, 1L);
     }
 
@@ -16,18 +18,24 @@ public final class BacktrackingSolution02 {
             int startIndex,
             long currentProduct
     ) {
+        // [1] 현재 곱이 target이면 조합 하나를 찾았으므로 1을 반환한다.
         if (currentProduct == target) {
             return 1;
         }
 
         int count = 0;
+        // [2] startIndex부터 고를 카드 후보를 확인한다.
         for (int index = startIndex; index < factorCards.length; index++) {
             int factor = factorCards[index];
+            // [3] 현재 곱이 target / 카드 값보다 크면 곱한 결과가 target을 넘으므로 건너뛴다.
             if (currentProduct > target / factor) {
                 continue;
             }
+            // [4] 카드를 고르면 다음 재귀는 index + 1부터 확인한다.
+            // [5] 이 가지에서 찾은 조합 수를 현재 개수에 더한다.
             count += countCombinations(factorCards, target, index + 1, currentProduct * factor);
         }
+        // [6] 모든 카드 후보를 확인한 뒤 조합 수를 반환한다.
         return count;
     }
 
@@ -48,7 +56,8 @@ public final class BacktrackingSolution02 {
      * 2. startIndex부터 고를 카드 후보를 확인한다.
      * 3. 현재 곱이 target / 카드 값보다 크면 곱한 결과가 target을 넘으므로 건너뛴다.
      * 4. 카드를 고르면 다음 재귀는 index + 1부터 확인한다.
-     * 5. 각 가지에서 찾은 조합 수를 더해 반환한다.
+     * 5. 이 가지에서 찾은 조합 수를 현재 개수에 더한다.
+     * 6. 모든 카드 후보를 확인한 뒤 조합 수를 반환한다.
      *
      * 예시 데이터 흐름
      * - factorCards=[2, 3, 4, 6, 12], target=12
