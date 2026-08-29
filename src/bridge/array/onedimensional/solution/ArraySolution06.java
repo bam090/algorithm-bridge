@@ -7,21 +7,33 @@ public final class ArraySolution06 {
     }
 
     public static int solve(int[] values) {
+        // 한 번 순회하는 이유:
+        // 연속 상승은 현재 값과 바로 앞 값만 비교하면 이어지는지 알 수 있다.
+        // 현재 길이와 최고 길이만 함께 기억하면 실제 구간을 따로 저장할 필요가 없다.
+
+        // [1] 빈 배열이면 0을 반환한다.
         if (values.length == 0) {
             return 0;
         }
 
+        // [2] 원소가 있는 경우 현재 길이와 최고 길이를 1로 시작한다.
         int currentLength = 1;
         int bestLength = 1;
 
+        // [3] 두 번째 원소부터 이전 값과 비교한다.
         for (int i = 1; i < values.length; i++) {
+            // [4] 더 크면 현재 길이를 늘리고, 같거나 작으면 현재 길이를 1로 다시 시작한다.
             if (values[i] > values[i - 1]) {
                 currentLength++;
             } else {
                 currentLength = 1;
             }
+
+            // [5] 매 위치에서 최고 길이를 갱신한다.
             bestLength = Math.max(bestLength, currentLength);
         }
+
+        // [6] bestLength를 반환한다.
         return bestLength;
     }
 

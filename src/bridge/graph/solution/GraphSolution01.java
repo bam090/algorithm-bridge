@@ -12,6 +12,10 @@ public final class GraphSolution01 {
     }
 
     public static long[] solve(int[] nodeValues, int[][] directedEdges, int startNode) {
+        // 단방향 연결에서 출발점으로부터 닿는 지점만 한 번씩 확인해야 한다.
+        // 인접 리스트와 반복 DFS를 쓰면 갈 수 있는 이웃만 따라가며 깊은 연결도 안전하게 탐색한다.
+
+        // [1] 지점 수만큼 이웃 목록을 만들고 각 단방향 간선을 from 목록에 넣는다.
         List<List<Integer>> graph = new ArrayList<>(nodeValues.length);
         for (int node = 0; node < nodeValues.length; node++) {
             graph.add(new ArrayList<>());
@@ -20,6 +24,7 @@ public final class GraphSolution01 {
             graph.get(edge[0] - 1).add(edge[1] - 1);
         }
 
+        // [2] 출발 번호를 0부터 시작하는 인덱스로 바꾸고 방문 표시한 뒤 스택에 넣는다.
         boolean[] visited = new boolean[nodeValues.length];
         Deque<Integer> stack = new ArrayDeque<>();
         int startIndex = startNode - 1;
@@ -29,10 +34,12 @@ public final class GraphSolution01 {
         long reachedCount = 0L;
         long valueSum = 0L;
         while (!stack.isEmpty()) {
+            // [3] 스택에서 지점을 꺼낼 때 개수와 그 지점의 값을 더한다.
             int current = stack.pop();
             reachedCount++;
             valueSum += nodeValues[current];
 
+            // [4] 아직 방문하지 않은 이웃을 방문 표시하고 스택에 넣는다.
             for (int next : graph.get(current)) {
                 if (!visited[next]) {
                     visited[next] = true;
@@ -40,6 +47,8 @@ public final class GraphSolution01 {
                 }
             }
         }
+
+        // [5] 스택이 비면 개수와 합을 long 배열로 반환한다.
         return new long[]{reachedCount, valueSum};
     }
 

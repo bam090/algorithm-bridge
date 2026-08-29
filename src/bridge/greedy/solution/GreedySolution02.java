@@ -9,13 +9,20 @@ public final class GreedySolution02 {
     }
 
     public static long solve(int[] kitCosts, int requiredCount) {
+        // 그리디를 선택한 이유:
+        // 같은 키트를 정확히 정해진 수만큼 사므로, 싼 가격부터 고르면 비용이 가장 작다.
+
+        // [1] 원본을 보존하도록 가격 배열을 복사해 오름차순 정렬한다.
         int[] orderedCosts = kitCosts.clone();
         Arrays.sort(orderedCosts);
 
+        // [2] 정렬된 앞부분에서 requiredCount개의 가격을 long 변수에 더한다.
         long totalCost = 0L;
         for (int i = 0; i < requiredCount; i++) {
             totalCost += orderedCosts[i];
         }
+
+        // [3] 최소 총비용을 반환한다.
         return totalCost;
     }
 

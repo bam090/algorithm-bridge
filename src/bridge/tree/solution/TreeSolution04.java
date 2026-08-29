@@ -15,11 +15,16 @@ public final class TreeSolution04 {
             String[] eventNames,
             int[] eventPoints
     ) {
+        // 관계 행이 섞여 있어도 이름으로 부모와 결과 위치를 바로 찾아야 한다.
+        // 두 Map을 만든 뒤 사건 이름에서 부모를 따라가면 각 영향 점수를 필요한 칸에 바로 더할 수 있다.
+
+        // [1] outputOrder의 각 이름을 결과 인덱스와 연결한다.
         Map<String, Integer> outputIndexByName = new HashMap<>();
         for (int index = 0; index < outputOrder.length; index++) {
             outputIndexByName.put(outputOrder[index], index);
         }
 
+        // [2] relations의 각 자식 이름을 부모 이름과 연결한다.
         Map<String, String> parentByChild = new HashMap<>();
         for (String[] relation : relations) {
             parentByChild.put(relation[0], relation[1]);
@@ -27,13 +32,20 @@ public final class TreeSolution04 {
 
         long[] totals = new long[outputOrder.length];
         for (int event = 0; event < eventNames.length; event++) {
+            // [3] 각 사건의 이름과 점수를 current와 points에 저장한다.
             String current = eventNames[event];
             long points = eventPoints[event];
+
             while (current != null) {
+                // [4] current가 가리키는 폴더의 결과 칸에 points를 더한다.
                 totals[outputIndexByName.get(current)] += points;
+
+                // [5] current를 부모 이름으로 바꾸고, 부모가 없을 때까지 4번과 5번을 반복한다.
                 current = parentByChild.get(current);
             }
         }
+
+        // [6] 모든 사건을 처리한 뒤 outputOrder와 같은 순서의 totals를 반환한다.
         return totals;
     }
 
@@ -55,9 +67,10 @@ public final class TreeSolution04 {
      * 풀이 순서
      * 1. outputOrder의 각 이름을 결과 인덱스와 연결한다.
      * 2. relations의 각 자식 이름을 부모 이름과 연결한다.
-     * 3. 사건 이름부터 시작해 그 이름의 결과 칸에 점수를 더한다.
-     * 4. 부모 이름을 찾을 수 없을 때까지 같은 동작을 반복한다.
-     * 5. 모든 사건을 처리한 뒤 outputOrder와 같은 순서의 totals를 반환한다.
+     * 3. 각 사건의 이름과 점수를 current와 points에 저장한다.
+     * 4. current가 가리키는 폴더의 결과 칸에 points를 더한다.
+     * 5. current를 부모 이름으로 바꾸고, 부모가 없을 때까지 4번과 5번을 반복한다.
+     * 6. 모든 사건을 처리한 뒤 outputOrder와 같은 순서의 totals를 반환한다.
      *
      * 예시 데이터 흐름
      * - summer의 5점은 summer, photo, root에 각각 더해진다.

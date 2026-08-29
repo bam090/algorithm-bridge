@@ -18,7 +18,7 @@ package bridge.simulation.solution;
  * 3. 마지막 짐 전까지만 앞에서부터 한 짐을 왼쪽으로 옮긴다.
  * 4. leftWeight에는 더하고 rightWeight에서는 뺀다.
  * 5. 두 합이 각 한도 이하이면 유효한 경계 수를 늘린다.
- * 6. 모든 가능한 경계를 확인한 수를 반환한다.
+ * 6. 모든 경계를 확인한 뒤 유효한 경계 수를 반환한다.
  *
  * 예시 데이터 흐름
  * 전체 합 10에서 첫 짐 2를 옮기면 왼쪽 2, 오른쪽 8이라 오른쪽 한도를 넘는다.
@@ -39,21 +39,29 @@ public final class SimulationSolution05 {
     }
 
     public static int solve(int[] weights, long leftCapacity, long rightCapacity) {
+        // 경계를 한 칸 옮길 때마다 짐 하나만 오른쪽에서 왼쪽으로 이동한다.
+        // 오른쪽 전체 합과 왼쪽 합을 갱신하면 모든 경계의 합을 다시 계산하지 않아도 된다.
+        // [1] 모든 짐의 합을 long으로 구해 rightWeight로 둔다.
         long rightWeight = 0;
         for (int weight : weights) {
             rightWeight += weight;
         }
 
+        // [2] leftWeight를 0으로 시작한다.
         long leftWeight = 0;
         int validBoundaryCount = 0;
+        // [3] 마지막 짐 전까지만 앞에서부터 한 짐을 왼쪽으로 옮긴다.
         for (int index = 0; index < weights.length - 1; index++) {
+            // [4] leftWeight에는 더하고 rightWeight에서는 뺀다.
             leftWeight += weights[index];
             rightWeight -= weights[index];
+            // [5] 두 합이 각 한도 이하이면 유효한 경계 수를 늘린다.
             if (leftWeight <= leftCapacity && rightWeight <= rightCapacity) {
                 validBoundaryCount++;
             }
         }
 
+        // [6] 모든 경계를 확인한 뒤 유효한 경계 수를 반환한다.
         return validBoundaryCount;
     }
 }

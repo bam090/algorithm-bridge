@@ -7,20 +7,33 @@ public final class DynamicProgrammingSolution02 {
     }
 
     public static long solve(int[] singleCosts, int[] pairCosts) {
+        // 동적 계획법을 선택한 이유:
+        // 마지막 인쇄는 한 장 또는 두 장뿐이므로, 앞부분의 최소 비용을 저장해 두 경우에 다시 쓴다.
+
         int photoCount = singleCosts.length;
+
+        // [1] 사진이 없으면 비용 0을 반환한다.
         if (photoCount == 0) {
             return 0L;
         }
 
+        // [2] 0장을 끝낸 비용은 0, 1장을 끝낸 비용은 첫 사진의 한 장 비용으로 저장한다.
         long[] minimumCost = new long[photoCount + 1];
         minimumCost[0] = 0L;
         minimumCost[1] = singleCosts[0];
 
         for (int count = 2; count <= photoCount; count++) {
+            // [3] 마지막 한 장을 따로 인쇄하는 비용을 계산한다.
             long lastSingle = minimumCost[count - 1] + singleCosts[count - 1];
+
+            // [4] 마지막 두 장을 묶어 인쇄하는 비용을 계산한다.
             long lastPair = minimumCost[count - 2] + pairCosts[count - 2];
+
+            // [5] 두 비용 중 작은 값을 현재 사진 수의 최소 비용으로 저장한다.
             minimumCost[count] = Math.min(lastSingle, lastPair);
         }
+
+        // [6] 모든 사진을 끝낸 최소 비용을 반환한다.
         return minimumCost[photoCount];
     }
 

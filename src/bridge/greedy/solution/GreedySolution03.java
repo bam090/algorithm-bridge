@@ -13,12 +13,18 @@ public final class GreedySolution03 {
             double[] wholeBatchCosts,
             double requiredAmount
     ) {
+        // 그리디를 선택한 이유:
+        // 세정액을 나눠 살 수 있으므로, 단위 비용이 싼 공급처부터 필요한 양만 고르면 된다.
+
+        // [1] 공급처마다 wholeBatchCosts / availableAmounts로 단위 비용을 계산한다.
         double[] unitCosts = new double[availableAmounts.length];
         Integer[] order = new Integer[availableAmounts.length];
         for (int i = 0; i < order.length; i++) {
             unitCosts[i] = wholeBatchCosts[i] / availableAmounts[i];
             order[i] = i;
         }
+
+        // [2] 공급처 번호를 단위 비용 오름차순, 원래 번호 오름차순으로 정렬한다.
         Arrays.sort(order, (left, right) -> {
             int byUnitCost = Double.compare(unitCosts[left], unitCosts[right]);
             if (byUnitCost != 0) {
@@ -33,10 +39,16 @@ public final class GreedySolution03 {
             if (remaining <= 0.0) {
                 break;
             }
+
+            // [3] 싼 공급처부터 availableAmounts와 남은 필요량 중 작은 양을 선택한다.
             double selected = Math.min(availableAmounts[index], remaining);
+
+            // [4] 구매량을 원래 공급처 번호 위치에 기록한다.
             selectedAmounts[index] = selected;
             remaining -= selected;
         }
+
+        // [5] 공급처별 구매량을 원래 번호 순서로 반환한다.
         return selectedAmounts;
     }
 
@@ -57,7 +69,8 @@ public final class GreedySolution03 {
      * 1. 공급처마다 wholeBatchCosts / availableAmounts로 단위 비용을 계산한다.
      * 2. 공급처 번호를 단위 비용 오름차순, 원래 번호 오름차순으로 정렬한다.
      * 3. 싼 공급처부터 availableAmounts와 남은 필요량 중 작은 양을 선택한다.
-     * 4. 구매량을 원래 공급처 번호 위치에 기록하고 반환한다.
+     * 4. 구매량을 원래 공급처 번호 위치에 기록한다.
+     * 5. 공급처별 구매량을 원래 번호 순서로 반환한다.
      *
      * 예시 데이터 흐름
      * - 단위 비용은 0번 5, 1번 9, 2번 7이다.

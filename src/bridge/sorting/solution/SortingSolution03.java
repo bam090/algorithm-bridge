@@ -43,19 +43,26 @@ public final class SortingSolution03 {
     }
 
     public static String[] solve(String[] requestIds, int[] priorityScores, int[] effortScores) {
+        // 같은 위치의 ID와 두 점수를 함께 움직여야 하고, 동점일 때 입력 순서도 지켜야 한다.
+        // 위치를 안정 정렬하면 세 배열을 떼지 않고 두 정렬 기준을 차례대로 적용할 수 있다.
+        // [1] 0부터 요청 수 바로 전까지의 배열 위치를 만든다.
         Integer[] indexes = new Integer[requestIds.length];
         for (int index = 0; index < indexes.length; index++) {
             indexes[index] = index;
         }
 
         Arrays.sort(indexes, (left, right) -> {
+            // [2] 우선 점수를 내림차순으로 비교한다.
             int byPriority = Integer.compare(priorityScores[right], priorityScores[left]);
             if (byPriority != 0) {
                 return byPriority;
             }
+            // [3] 우선 점수가 같으면 작업량 점수를 오름차순으로 비교한다.
+            // [4] 두 점수가 같으면 0을 반환해 원래 위치 순서를 유지한다.
             return Integer.compare(effortScores[left], effortScores[right]);
         });
 
+        // [5] 정렬된 위치에 해당하는 ID를 새 배열에 담는다.
         String[] answer = new String[requestIds.length];
         for (int index = 0; index < indexes.length; index++) {
             answer[index] = requestIds[indexes[index]];

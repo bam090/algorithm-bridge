@@ -7,6 +7,8 @@ public final class BacktrackingSolution05 {
     }
 
     public static int[] solve(int[][] pointsByHours, int hourLimit) {
+        // 프로젝트마다 시간 후보가 여러 개이고, 최선은 모든 프로젝트를 배정한 뒤에 알 수 있다.
+        // 한도 안의 후보를 재귀로 모두 확인하면 점수와 동점 규칙까지 빠짐없이 비교할 수 있다.
         BestAllocation best = new BestAllocation();
         int[] current = new int[pointsByHours.length];
         search(0, hourLimit, 0, 0, pointsByHours, current, best);
@@ -26,13 +28,16 @@ public final class BacktrackingSolution05 {
             if (isBetter(currentScore, usedHours, current, best)) {
                 best.score = currentScore;
                 best.usedHours = usedHours;
+                // [6] 더 좋은 결과라면 현재 배정 배열을 복사해 저장한다.
                 best.hours = current.clone();
             }
             return;
         }
 
         int maximum = Math.min(remainingHours, pointsByHours[project].length - 1);
+        // [1] 현재 프로젝트에 0시간부터 가능한 최대 시간까지 하나씩 배정한다.
         for (int hours = 0; hours <= maximum; hours++) {
+            // [2] 배정한 시간을 한도에서 빼고 해당 점수를 더해 다음 프로젝트로 이동한다.
             current[project] = hours;
             search(
                     project + 1,
@@ -53,13 +58,16 @@ public final class BacktrackingSolution05 {
             int[] current,
             BestAllocation best
     ) {
+        // [3] 모든 프로젝트를 확인하면 점수가 더 큰지 비교한다.
         if (best.hours == null || score != best.score) {
             return best.hours == null || score > best.score;
         }
+        // [4] 점수가 같으면 사용 시간이 더 적은지 비교한다.
         if (usedHours != best.usedHours) {
             return usedHours < best.usedHours;
         }
 
+        // [5] 두 값도 같으면 앞 프로젝트부터 시간이 더 적은 배정인지 비교한다.
         for (int project = 0; project < current.length; project++) {
             if (current[project] != best.hours[project]) {
                 return current[project] < best.hours[project];

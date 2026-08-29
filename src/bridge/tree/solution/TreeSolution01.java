@@ -7,20 +7,28 @@ public final class TreeSolution01 {
     }
 
     public static long solve(int[] treeValues) {
+        // 완전 이진 트리 배열에서는 인덱스 계산만으로 두 자식의 위치를 알 수 있다.
+        // 같은 확인을 두 자식에 반복하므로 재귀로 끝 노드의 값만 모으는 방법이 문제 동작과 맞다.
+
         return sumLeafValues(treeValues, 0);
     }
 
     private static long sumLeafValues(int[] treeValues, int index) {
+        // [1] 현재 인덱스가 배열 길이 이상이면 0을 반환해 재귀를 끝낸다.
         if (index >= treeValues.length) {
             return 0L;
         }
 
+        // [2] 왼쪽은 2 * index + 1, 오른쪽은 2 * index + 2로 계산한다.
         int leftChild = index * 2 + 1;
         int rightChild = index * 2 + 2;
+
+        // [3] 두 자식이 모두 배열 밖이면 현재 값을 long으로 반환한다.
         if (leftChild >= treeValues.length && rightChild >= treeValues.length) {
             return treeValues[index];
         }
 
+        // [4] 자식이 있으면 왼쪽과 오른쪽 재귀 결과를 더해 반환한다.
         return sumLeafValues(treeValues, leftChild)
                 + sumLeafValues(treeValues, rightChild);
     }

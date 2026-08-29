@@ -41,16 +41,26 @@ public final class HashSolution01 {
     }
 
     public static int solve(int[] codes) {
+        // 현재 코드의 짝이 앞에 나온 적이 있는지만 빠르게 확인해야 한다.
+        // 이전 값을 Set에 모으면 앞부분을 매번 다시 훑지 않고도 짝의 존재를 알 수 있다.
+
+        // [1] 이전 코드를 기억할 빈 Set을 만든다.
         Set<Integer> previousCodes = new HashSet<>();
 
         for (int index = 0; index < codes.length; index++) {
             int code = codes[index];
+
+            // [2] 현재 코드의 반대 값이 Set에 있는지 확인한다.
             if (previousCodes.contains(-code)) {
+                // [3] 있다면 현재 배열 인덱스에 1을 더해 반환한다.
                 return index + 1;
             }
+
+            // [4] 없다면 현재 코드를 Set에 저장하고 다음 위치로 간다.
             previousCodes.add(code);
         }
 
+        // [5] 끝까지 찾지 못하면 -1을 반환한다.
         return -1;
     }
 }

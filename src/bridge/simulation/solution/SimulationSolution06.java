@@ -12,14 +12,15 @@ package bridge.simulation.solution;
  * 대칭 후보 축소를 선택한 이유
  * 약수 하나를 찾으면 짝은 나눗셈으로 바로 정해진다.
  * 작은 약수만 확인하면 모든 곱 조합을 중복 없이 확인할 수 있다.
- * 약수 후보 수만큼만 반복하므로 totalActions 전체를 확인하는 것보다 바르다.
+ * 약수 후보 수만큼만 반복하므로 totalActions 전체를 확인하는 것보다 빠르다.
  *
  * 풀이 순서
  * 1. Math.sqrt로 totalActions의 제곱근 이하 정수 경계를 구하고 정수 나눗셈으로 보정한다.
  * 2. 1부터 그 경계까지 totalActions의 약수인지 확인한다.
  * 3. 약수이면 나눗셈으로 짝이 되는 큰 수를 구한다.
  * 4. 두 수의 합이 reportInterval의 배수인지 확인한다.
- * 5. 조건을 통과할 때마다 개수를 늘리고 모든 후보를 확인한 뒤 반환한다.
+ * 5. 조건을 통과할 때마다 개수를 늘린다.
+ * 6. 모든 후보를 확인한 뒤 유효한 약수 쌍의 수를 반환한다.
  *
  * 예시 데이터 흐름
  * 36의 순서 없는 약수 쌍은 (1, 36), (2, 18), (3, 12), (4, 9), (6, 6)이다.
@@ -41,6 +42,9 @@ public final class SimulationSolution06 {
     }
 
     public static int solve(long totalActions, int reportInterval) {
+        // 곱의 순서를 바꾼 약수 쌍은 같고, 작은 수를 알면 큰 수는 나눗셈으로 정해진다.
+        // 따라서 제곱근 이하의 후보만 보면 모든 쌍을 중복 없이 확인할 수 있다.
+        // [1] Math.sqrt로 totalActions의 제곱근 이하 정수 경계를 구하고 정수 나눗셈으로 보정한다.
         long limit = (long) Math.sqrt(totalActions);
         while (limit + 1 <= totalActions / (limit + 1)) {
             limit++;
@@ -50,17 +54,22 @@ public final class SimulationSolution06 {
         }
 
         int validPairCount = 0;
+        // [2] 1부터 그 경계까지 totalActions의 약수인지 확인한다.
         for (long candidate = 1; candidate <= limit; candidate++) {
             if (totalActions % candidate != 0) {
                 continue;
             }
 
+            // [3] 약수이면 나눗셈으로 짝이 되는 큰 수를 구한다.
             long partner = totalActions / candidate;
+            // [4] 두 수의 합이 reportInterval의 배수인지 확인한다.
             if ((candidate + partner) % reportInterval == 0) {
+                // [5] 조건을 통과할 때마다 개수를 늘린다.
                 validPairCount++;
             }
         }
 
+        // [6] 모든 후보를 확인한 뒤 유효한 약수 쌍의 수를 반환한다.
         return validPairCount;
     }
 }

@@ -19,6 +19,10 @@ public final class GraphSolution05 {
             int checkpointNode,
             int[] destinations
     ) {
+        // 모든 경로가 점검소를 지나야 하므로 이동을 출발점→점검소와 점검소→목적지로 나눌 수 있다.
+        // 비용이 1인 두 구간을 각각 BFS하면 여러 목적지에도 같은 점검소 거리표를 다시 쓸 수 있다.
+
+        // [1] 단방향 인접 리스트를 만든다.
         List<List<Integer>> graph = new ArrayList<>(nodeCount);
         for (int node = 0; node < nodeCount; node++) {
             graph.add(new ArrayList<>());
@@ -27,21 +31,31 @@ public final class GraphSolution05 {
             graph.get(route[0] - 1).add(route[1] - 1);
         }
 
+        // [2] 출발점에서 BFS해 점검소까지의 최소 거리를 구한다.
         int[] distanceFromStart = findDistances(graph, startNode - 1);
+
+        // [3] 새 거리 배열과 큐로 점검소에서 다시 BFS한다.
         int[] distanceFromCheckpoint = findDistances(graph, checkpointNode - 1);
         int startToCheckpoint = distanceFromStart[checkpointNode - 1];
 
         int[] result = new int[destinations.length];
+
         for (int index = 0; index < destinations.length; index++) {
+            // [4] 목적지마다 점검소에서 그 목적지까지의 거리를 꺼낸다.
             int checkpointToDestination = distanceFromCheckpoint[destinations[index] - 1];
+
+            // [5] 두 구간 중 하나라도 -1이면 -1을, 둘 다 있으면 합을 같은 결과 위치에 저장한다.
             result[index] = startToCheckpoint == -1 || checkpointToDestination == -1
                     ? -1
                     : startToCheckpoint + checkpointToDestination;
         }
+
+        // [6] 모든 목적지를 처리한 결과 배열을 destinations 순서로 반환한다.
         return result;
     }
 
     private static int[] findDistances(List<List<Integer>> graph, int start) {
+        // 시작점마다 새 거리 배열과 Queue를 만들어 가까운 정점부터 최소 거리를 기록한다.
         int[] distance = new int[graph.size()];
         Arrays.fill(distance, -1);
 
@@ -79,8 +93,9 @@ public final class GraphSolution05 {
      * 1. 단방향 인접 리스트를 만든다.
      * 2. 출발점에서 BFS해 점검소까지의 최소 거리를 구한다.
      * 3. 새 거리 배열과 큐로 점검소에서 다시 BFS한다.
-     * 4. 목적지마다 두 구간 중 하나라도 -1이면 -1을 저장한다.
-     * 5. 두 구간이 모두 있으면 거리를 더해 destinations 순서로 반환한다.
+     * 4. 목적지마다 점검소에서 그 목적지까지의 거리를 꺼낸다.
+     * 5. 두 구간 중 하나라도 -1이면 -1을, 둘 다 있으면 합을 같은 결과 위치에 저장한다.
+     * 6. 모든 목적지를 처리한 결과 배열을 destinations 순서로 반환한다.
      *
      * 예시 데이터 흐름
      * - 1번에서 3번 점검소까지 최소 거리는 2다.

@@ -7,9 +7,20 @@ public final class ArraySolution01 {
     }
 
     public static int[] solve(int[] readings, int slotNumber, int correctedValue) {
+        // 배열을 복사하는 이유:
+        // 원본을 바꾸면 안 되고 고칠 위치가 정해져 있으므로,
+        // 값을 모두 복사한 새 배열에서 그 한 칸만 바꾸면 된다.
+
+        // [1] readings의 모든 값을 새 배열 result에 복사한다.
         int[] result = readings.clone();
+
+        // [2] slotNumber에서 1을 빼 Java 인덱스로 바꾼다.
         int index = slotNumber - 1;
+
+        // [3] result의 그 인덱스만 correctedValue로 바꾼다.
         result[index] = correctedValue;
+
+        // [4] result를 반환한다.
         return result;
     }
 

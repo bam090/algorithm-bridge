@@ -12,6 +12,11 @@ public final class StackSolution05 {
     }
 
     public static int[] solve(int[][] sourceStacks, int[] picks, int cancelSum) {
+        // Stack과 List를 선택한 이유:
+        // 각 더미는 맨 위 카드만 꺼내고 결과도 가장 최근 카드와만 비교하므로 Stack이 맞다.
+        // 여러 원본 Stack을 List에 두면 pick 번호로 필요한 더미를 바로 찾을 수 있다.
+
+        // [1] 각 행을 왼쪽부터 push해 행의 마지막 카드를 맨 위에 둔다.
         List<Deque<Integer>> sources = new ArrayList<>(sourceStacks.length);
         for (int[] sourceStack : sourceStacks) {
             Deque<Integer> source = new ArrayDeque<>();
@@ -23,19 +28,26 @@ public final class StackSolution05 {
 
         Deque<Integer> resultStack = new ArrayDeque<>();
         for (int pick : picks) {
+            // [2] pick에서 1을 빼 선택할 원본 스택을 찾는다.
             Deque<Integer> source = sources.get(pick - 1);
+
+            // [3] 빈 원본은 건너뛰고, 아니면 맨 위 카드를 꺼낸다.
             if (source.isEmpty()) {
                 continue;
             }
 
             int card = source.pop();
+
+            // [4] 결과 스택의 맨 위 카드와 합이 cancelSum이면 이전 카드를 꺼낸다.
             if (!resultStack.isEmpty() && resultStack.peek() + card == cancelSum) {
                 resultStack.pop();
             } else {
+                // [5] 상쇄되지 않으면 새 카드를 결과 스택에 올린다.
                 resultStack.push(card);
             }
         }
 
+        // [6] 결과 스택을 pop하며 결과 배열의 뒤에서부터 채운다.
         int[] answer = new int[resultStack.size()];
         for (int index = answer.length - 1; index >= 0; index--) {
             answer[index] = resultStack.pop();

@@ -11,6 +11,10 @@ public final class GreedySolution06 {
     }
 
     public static int[] solve(int roadLength, int[][] coveredIntervals, int patchWidth) {
+        // 구간 단위 그리디를 선택한 이유:
+        // 기존 구간은 한 번에 건너뛰고, 첫 빈 위치부터 덮어야 고정 폭을 오른쪽으로 가장 멀리 쓸 수 있다.
+
+        // [1] 원본 행을 복사해 기존 구간을 시작과 끝 순서로 정렬한다.
         int[][] ordered = new int[coveredIntervals.length][];
         for (int i = 0; i < coveredIntervals.length; i++) {
             ordered[i] = coveredIntervals[i].clone();
@@ -27,20 +31,25 @@ public final class GreedySolution06 {
         long current = 0;
 
         for (int[] interval : ordered) {
+            // [2] current가 구간 시작보다 작으면 빈 위치이므로 그곳에 새 덮개를 놓고 폭만큼 이동한다.
             while (current < interval[0]) {
                 patchStarts.add((int) current);
                 current += patchWidth;
             }
+
+            // [3] current가 기존 구간 안에 있으면 구간 끝 다음으로 건너뛴다.
             if (current <= interval[1]) {
                 current = (long) interval[1] + 1;
             }
         }
 
+        // [4] 모든 기존 구간을 지난 뒤 산책로 끝까지 같은 방법으로 새 덮개를 놓는다.
         while (current < roadLength) {
             patchStarts.add((int) current);
             current += patchWidth;
         }
 
+        // [5] 새 덮개의 시작 위치를 설치 순서대로 반환한다.
         int[] result = new int[patchStarts.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = patchStarts.get(i);

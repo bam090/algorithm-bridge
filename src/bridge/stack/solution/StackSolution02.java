@@ -10,15 +10,25 @@ public final class StackSolution02 {
     }
 
     public static int[] solve(int[] previousCheckpoint, int destination) {
+        // Stack을 선택한 이유:
+        // 이전 번호를 따라가면 목적지부터 출발점까지 거꾸로 만나므로,
+        // 찾은 번호를 Stack에 넣었다가 꺼내면 출발점부터 목적지까지의 순서로 뒤집을 수 있다.
+
+        // [1] 빈 스택을 만들고 current를 destination으로 시작한다.
         Deque<Integer> route = new ArrayDeque<>();
         int current = destination;
 
+        // [2] current가 0이 될 때까지 반복한다.
         while (current != 0) {
+            // [3] current를 스택에 넣고 previousCheckpoint[current - 1]로 이동한다.
             route.push(current);
             current = previousCheckpoint[current - 1];
         }
 
+        // [4] 스택 크기만큼 결과 배열을 만든다.
         int[] answer = new int[route.size()];
+
+        // [5] 스택에서 꺼낸 번호를 결과 배열 앞에서부터 저장해 반환한다.
         for (int index = 0; index < answer.length; index++) {
             answer[index] = route.pop();
         }
@@ -38,11 +48,11 @@ public final class StackSolution02 {
      * - 경로 길이를 미리 몰라도 스택에 모두 넣은 뒤 size()로 알 수 있다.
      *
      * 풀이 순서
-     * 1. current를 destination으로 시작한다.
-     * 2. current를 스택에 넣고 previousCheckpoint[current - 1]로 이동한다.
-     * 3. current가 0이 될 때까지 반복한다.
+     * 1. 빈 스택을 만들고 current를 destination으로 시작한다.
+     * 2. current가 0이 될 때까지 반복한다.
+     * 3. current를 스택에 넣고 previousCheckpoint[current - 1]로 이동한다.
      * 4. 스택 크기만큼 결과 배열을 만든다.
-     * 5. 스택에서 꺼낸 번호를 결과 배열 앞에서부터 저장한다.
+     * 5. 스택에서 꺼낸 번호를 결과 배열 앞에서부터 저장해 반환한다.
      *
      * 예시 데이터 흐름
      * - previousCheckpoint=[0, 1, 2, 2, 4], destination=5

@@ -7,17 +7,26 @@ public final class ArraySolution11 {
     }
 
     public static int[] solve(int[] observations, int[][] cycles, int minimumMatches) {
+        // 나머지 연산과 점검표별 배열을 선택한 이유:
+        // 반복되는 점검표는 i % 점검표 길이로 현재 코드를 찾을 수 있다.
+        // 점검표마다 일치 개수를 따로 저장하면 기준을 넘긴 번호만 순서대로 고를 수 있다.
+
+        // [1] 점검표 개수와 같은 길이의 matchCounts를 만든다.
         int[] matchCounts = new int[cycles.length];
 
+        // [2] 각 점검표에 대해 observations를 처음부터 끝까지 확인한다.
         for (int cycle = 0; cycle < cycles.length; cycle++) {
             for (int i = 0; i < observations.length; i++) {
                 int expected = cycles[cycle][i % cycles[cycle].length];
+
+                // [3] observations[i]와 반복 점검표의 현재 코드가 같으면 해당 개수를 늘린다.
                 if (observations[i] == expected) {
                     matchCounts[cycle]++;
                 }
             }
         }
 
+        // [4] minimumMatches 이상인 점검표 개수를 센다.
         int passedCount = 0;
         for (int matchCount : matchCounts) {
             if (matchCount >= minimumMatches) {
@@ -25,6 +34,7 @@ public final class ArraySolution11 {
             }
         }
 
+        // [5] 통과한 개수로 결과 배열을 만들고 1부터 세는 점검표 번호를 입력 순서대로 넣는다.
         int[] passedCycles = new int[passedCount];
         int resultIndex = 0;
         for (int cycle = 0; cycle < matchCounts.length; cycle++) {
@@ -33,6 +43,8 @@ public final class ArraySolution11 {
                 resultIndex++;
             }
         }
+
+        // [6] passedCycles를 반환한다.
         return passedCycles;
     }
 

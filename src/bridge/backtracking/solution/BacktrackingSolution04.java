@@ -7,6 +7,8 @@ public final class BacktrackingSolution04 {
     }
 
     public static boolean solve(int[][] workerIds, int[][] toolIds) {
+        // 날짜마다 후보 하나를 골라야 하고 담당자와 도구는 다시 쓸 수 없다.
+        // 두 사용 여부를 표시하며 재귀하고 취소하면 겹치지 않는 모든 일정을 확인할 수 있다.
         boolean[] usedWorkers = new boolean[1_001];
         boolean[] usedTools = new boolean[1_001];
         return canAssignDay(0, workerIds, toolIds, usedWorkers, usedTools);
@@ -19,20 +21,25 @@ public final class BacktrackingSolution04 {
             boolean[] usedWorkers,
             boolean[] usedTools
     ) {
+        // [1] day가 전체 날짜 수와 같으면 모든 배정이 끝났으므로 true를 반환한다.
         if (day == workerIds.length) {
             return true;
         }
 
+        // [2] 현재 날짜의 후보를 앞에서부터 확인한다.
         for (int candidate = 0; candidate < workerIds[day].length; candidate++) {
             int worker = workerIds[day][candidate];
             int tool = toolIds[day][candidate];
+            // [3] 담당자나 도구가 이미 사용 중이면 건너뛴다.
             if (usedWorkers[worker] || usedTools[tool]) {
                 continue;
             }
 
+            // [4] 두 값을 사용 중이라고 표시하고 다음 날짜를 배정한다.
             usedWorkers[worker] = true;
             usedTools[tool] = true;
             boolean completed = canAssignDay(day + 1, workerIds, toolIds, usedWorkers, usedTools);
+            // [5] 돌아오면 두 표시를 지우고, 완성에 성공했다면 true를 반환한다.
             usedWorkers[worker] = false;
             usedTools[tool] = false;
 
@@ -40,6 +47,7 @@ public final class BacktrackingSolution04 {
                 return true;
             }
         }
+        // [6] 모든 후보가 실패하면 false를 반환한다.
         return false;
     }
 

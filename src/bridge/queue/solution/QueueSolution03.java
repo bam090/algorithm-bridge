@@ -10,6 +10,11 @@ public final class QueueSolution03 {
     }
 
     public static int[] solve(int[] requestedMinutes, int[] preparationMinutes) {
+        // Queue를 선택한 이유:
+        // 주문 순서를 바꿀 수 없고 아직 건네지 않은 맨 앞 주문이 회차 기준을 정하므로,
+        // 준비 시각을 Queue에 넣으면 앞에서부터 연속한 주문만 차례로 묶을 수 있다.
+
+        // [1] 각 주문의 요청 시각과 준비 시간을 더해 준비 시각을 큐에 넣는다.
         Queue<Integer> readyTimes = new ArrayDeque<>(requestedMinutes.length);
         for (int i = 0; i < requestedMinutes.length; i++) {
             readyTimes.offer(requestedMinutes[i] + preparationMinutes[i]);
@@ -20,17 +25,23 @@ public final class QueueSolution03 {
         int batchNumber = 1;
 
         while (!readyTimes.isEmpty()) {
+            // [2] 맨 앞 준비 시각을 꺼내 새 수령 회차의 기준 시각으로 정한다.
             int pickupMinute = readyTimes.poll();
             batchNumbers[resultIndex] = batchNumber;
             resultIndex++;
 
+            // [3] 뒤에 연속한 준비 시각이 기준 이하인 동안 꺼내 같은 회차 번호를 기록한다.
             while (!readyTimes.isEmpty() && readyTimes.peek() <= pickupMinute) {
                 readyTimes.poll();
                 batchNumbers[resultIndex] = batchNumber;
                 resultIndex++;
             }
+
+            // [4] 현재 회차가 끝나면 다음 회차 번호를 준비한다.
             batchNumber++;
         }
+
+        // [5] 모든 주문의 회차 번호를 반환한다.
         return batchNumbers;
     }
 

@@ -10,18 +10,29 @@ public final class SetSolution02 {
     }
 
     public static int[] solve(int[] checkCodes, int inspectors, int allowedGap) {
+        // 첫 중복을 찾으려면 앞에서 본 코드를 기억하면서 기록을 한 번만 확인하면 된다.
+        // HashSet의 add 결과로 중복을 바로 알고, 같은 순회에서 이웃 간격도 함께 검사할 수 있다.
+
+        // [1] 아직 본 코드가 없는 빈 HashSet을 만든다.
         Set<Integer> seenCodes = new HashSet<>();
 
         for (int i = 0; i < checkCodes.length; i++) {
             int code = checkCodes[i];
+
+            // [2] 현재 코드를 집합에 넣으며 중복인지 확인한다.
             boolean repeated = !seenCodes.add(code);
+
+            // [3] 두 번째 기록부터 현재 코드와 바로 앞 코드의 차이를 확인한다.
             boolean gapBroken = i > 0 && Math.abs(code - checkCodes[i - 1]) > allowedGap;
 
             if (repeated || gapBroken) {
+                // [4] 처음 어긴 인덱스를 담당 번호로 바꿔 코드와 함께 반환한다.
                 int inspectorNumber = i % inspectors + 1;
                 return new int[]{inspectorNumber, code};
             }
         }
+
+        // [5] 끝까지 오류가 없으면 빈 배열을 반환한다.
         return new int[]{};
     }
 

@@ -10,6 +10,8 @@ public final class BacktrackingSolution01 {
     }
 
     public static int[] solve(int[] points) {
+        // 각 위치마다 점수를 선택하거나 지나가는 두 길을 모두 확인해야 한다.
+        // 재귀 뒤 선택을 지우면 같은 목록으로 다른 길을 이어서 확인할 수 있다.
         int[] result = new int[1 << points.length];
         collectSums(points, 0, new ArrayList<>(), result, 0);
         return result;
@@ -22,6 +24,7 @@ public final class BacktrackingSolution01 {
             int[] result,
             int resultIndex
     ) {
+        // [5] index가 points.length이면 현재 선택 목록의 합을 결과에 담는다.
         if (index == points.length) {
             int sum = 0;
             for (int point : selectedPoints) {
@@ -31,10 +34,14 @@ public final class BacktrackingSolution01 {
             return resultIndex + 1;
         }
 
+        // [1] 현재 점수를 선택 목록에 넣는다.
         selectedPoints.add(points[index]);
+        // [2] 다음 위치의 선택을 확인한다.
         int nextResultIndex = collectSums(points, index + 1, selectedPoints, result, resultIndex);
+        // [3] 돌아오면 방금 넣은 점수를 지운다.
         selectedPoints.removeLast();
 
+        // [4] 현재 점수를 선택하지 않은 채 다음 위치를 확인한다.
         return collectSums(points, index + 1, selectedPoints, result, nextResultIndex);
     }
 

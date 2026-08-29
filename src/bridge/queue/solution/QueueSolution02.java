@@ -10,6 +10,11 @@ public final class QueueSolution02 {
     }
 
     public static int[] solve(int[] scores, int[] rotations, int removalLimit) {
+        // Queue를 선택한 이유:
+        // 명령마다 맨 앞 값을 맨 뒤로 옮긴 뒤 새 맨 앞 값만 확인해야 하므로,
+        // 앞에서 꺼내고 뒤에 넣는 Queue로 순서 변화를 그대로 표현할 수 있다.
+
+        // [1] scores를 큐에 순서대로 넣는다.
         Queue<Integer> queue = new ArrayDeque<>(scores.length);
         for (int score : scores) {
             queue.offer(score);
@@ -20,16 +25,21 @@ public final class QueueSolution02 {
                 break;
             }
 
+            // [2] 큐가 비지 않았다면 이동 횟수를 현재 큐 길이로 나눈 나머지를 구한다.
             int moves = rotation % queue.size();
+
+            // [3] 나머지 횟수만큼 맨 앞 값을 꺼내 맨 뒤에 넣는다.
             for (int count = 0; count < moves; count++) {
                 queue.offer(queue.poll());
             }
 
+            // [4] 맨 앞 점수가 removalLimit 이하이면 그 값만 제거한다.
             if (queue.peek() <= removalLimit) {
                 queue.poll();
             }
         }
 
+        // [5] 모든 명령 뒤에 남은 값을 새 배열에 담아 반환한다.
         int[] result = new int[queue.size()];
         int index = 0;
         for (int score : queue) {

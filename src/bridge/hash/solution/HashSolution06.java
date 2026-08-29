@@ -55,11 +55,16 @@ public final class HashSolution06 {
             String[][] relations,
             int minimumReviewers
     ) {
+        // 같은 검수 관계는 한 번만 인정하므로 프로젝트별 검수자를 Set으로 모아야 한다.
+        // Map으로 프로젝트와 검수자 위치를 연결하면 후보를 관련 검수자에게 바로 되돌려 비교할 수 있다.
+
+        // [1] 검수자 ID별 reviewerOrder 위치를 Map에 저장한다.
         Map<String, Integer> reviewerIndexes = new HashMap<>();
         for (int index = 0; index < reviewerOrder.length; index++) {
             reviewerIndexes.put(reviewerOrder[index], index);
         }
 
+        // [2] 프로젝트별 고유 검수자 Set을 만든다.
         Map<String, Set<String>> reviewersByProject = new HashMap<>();
         for (String[] relation : relations) {
             reviewersByProject
@@ -72,6 +77,7 @@ public final class HashSolution06 {
         int[] selectedPriorities = new int[reviewerOrder.length];
         Arrays.fill(selectedPriorities, -1);
 
+        // [3] 고유 검수자 수가 기준 이상인 프로젝트만 확인한다.
         for (int projectIndex = 0; projectIndex < projectIds.length; projectIndex++) {
             String projectId = projectIds[projectIndex];
             Set<String> reviewers = reviewersByProject.get(projectId);
@@ -80,8 +86,12 @@ public final class HashSolution06 {
             }
 
             int priority = priorities[projectIndex];
+
+            // [4] 그 프로젝트를 검수한 사람마다 현재 선택과 우선순위를 비교한다.
             for (String reviewer : reviewers) {
                 int reviewerIndex = reviewerIndexes.get(reviewer);
+
+                // [5] 우선순위가 크거나, 같으면서 ID가 사전 순으로 앞서면 선택을 바꾼다.
                 if (isBetterProject(
                         projectId,
                         priority,
@@ -102,6 +112,7 @@ public final class HashSolution06 {
             String selectedId,
             int selectedPriority
     ) {
+        // 우선순위가 먼저이고, 같은 경우에만 프로젝트 ID로 동점을 푼다.
         return candidatePriority > selectedPriority
                 || candidatePriority == selectedPriority && candidateId.compareTo(selectedId) < 0;
     }

@@ -41,11 +41,15 @@ public final class SortingSolution01 {
     }
 
     public static int[] solve(int[] readings, int minimumCount) {
+        // 측정값의 범위가 작고 정해져 있으며, 같은 값의 등장 횟수도 필요하다.
+        // 값마다 횟수 칸을 두면 비교 정렬 없이 작은 값부터 결과를 만들 수 있다.
+        // [1] 측정값마다 1_000을 더한 위치의 횟수를 늘린다.
         int[] counts = new int[MAXIMUM_VALUE - MINIMUM_VALUE + 1];
         for (int reading : readings) {
             counts[reading - MINIMUM_VALUE]++;
         }
 
+        // [2] minimumCount 이상인 값들의 횟수를 더해 결과 길이를 구한다.
         int resultLength = 0;
         for (int count : counts) {
             if (count >= minimumCount) {
@@ -53,8 +57,10 @@ public final class SortingSolution01 {
             }
         }
 
+        // [3] 결과 길이만큼 새 배열을 만든다.
         int[] answer = new int[resultLength];
         int writeIndex = 0;
+        // [4] 작은 값부터 확인하며 조건을 만족한 값을 나온 횟수만큼 결과에 담는다.
         for (int index = 0; index < counts.length; index++) {
             if (counts[index] < minimumCount) {
                 continue;
@@ -65,6 +71,7 @@ public final class SortingSolution01 {
                 answer[writeIndex++] = value;
             }
         }
+        // [5] 새 배열을 반환한다.
         return answer;
     }
 }

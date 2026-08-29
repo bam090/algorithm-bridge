@@ -12,6 +12,10 @@ public final class GraphSolution04 {
     }
 
     public static int[] solve(int nodeCount, int[][] undirectedEdges) {
+        // 연결되지 않은 장치까지 포함해 모든 연결 묶음과 각 묶음의 크기를 찾아야 한다.
+        // 미방문 장치마다 DFS하고 구성원을 모으면 크기를 안 뒤 같은 값을 한꺼번에 기록할 수 있다.
+
+        // [1] 양방향 인접 리스트를 만든다.
         List<List<Integer>> graph = new ArrayList<>(nodeCount);
         for (int node = 0; node < nodeCount; node++) {
             graph.add(new ArrayList<>());
@@ -27,11 +31,13 @@ public final class GraphSolution04 {
         int[] componentSizeByNode = new int[nodeCount];
         Deque<Integer> stack = new ArrayDeque<>();
 
+        // [2] 1번부터 모든 장치를 확인하며 이미 방문한 번호는 건너뛴다.
         for (int start = 0; start < nodeCount; start++) {
             if (visited[start]) {
                 continue;
             }
 
+            // [3] 미방문 장치에서 반복 DFS를 시작해 같은 묶음의 구성원을 모은다.
             List<Integer> members = new ArrayList<>();
             stack.push(start);
             visited[start] = true;
@@ -46,11 +52,14 @@ public final class GraphSolution04 {
                 }
             }
 
+            // [4] 모은 구성원 수를 각 구성원의 결과 인덱스에 저장한다.
             int componentSize = members.size();
             for (int member : members) {
                 componentSizeByNode[member] = componentSize;
             }
         }
+
+        // [5] 모든 장치를 확인한 뒤 번호 순서의 결과를 반환한다.
         return componentSizeByNode;
     }
 

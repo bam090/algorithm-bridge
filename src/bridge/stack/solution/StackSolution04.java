@@ -10,18 +10,28 @@ public final class StackSolution04 {
     }
 
     public static int solve(int[] heights) {
+        // Stack을 선택한 이유: 현재 높이는 아직 답이 없는 여러 낮은 표지의 첫 더 높은 값이 될 수 있다.
+        // 답이 없는 인덱스를 Stack 위에서부터 꺼내면 거리를 바로 계산할 수 있다.
+        // 각 인덱스를 한 번만 넣고 꺼내므로 오른쪽을 매번 다시 확인하지 않는다.
+
         Deque<Integer> unresolvedIndexes = new ArrayDeque<>();
         int longestDistance = 0;
 
+        // [1] 왼쪽부터 현재 index를 확인한다.
         for (int index = 0; index < heights.length; index++) {
+            // [2] 현재 높이가 스택 맨 위 인덱스의 높이보다 큰 동안 인덱스를 꺼낸다.
             while (!unresolvedIndexes.isEmpty()
                     && heights[unresolvedIndexes.peek()] < heights[index]) {
+                // [3] 현재 index와 꺼낸 인덱스의 차이로 거리를 계산해 최댓값을 갱신한다.
                 int previousIndex = unresolvedIndexes.pop();
                 longestDistance = Math.max(longestDistance, index - previousIndex);
             }
+
+            // [4] 현재 index를 아직 답이 없는 위치로 스택에 넣는다.
             unresolvedIndexes.push(index);
         }
 
+        // [5] 끝에 남은 인덱스는 오른쪽에 더 높은 값이 없으므로 거리 계산에서 제외한다.
         return longestDistance;
     }
 

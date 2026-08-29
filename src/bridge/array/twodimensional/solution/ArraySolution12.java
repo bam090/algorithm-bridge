@@ -7,18 +7,32 @@ public final class ArraySolution12 {
     }
 
     public static int[] solve(int[][] table) {
+        // 행과 열을 함께 순회하는 이유:
+        // 결과 하나마다 같은 번호의 행과 열이 모두 필요하므로 두 인덱스의 자리를 바꿔 읽는다.
+        // 교차점을 한 번만 더하면 별도의 2차원 결과 없이 필요한 1차원 합계를 만들 수 있다.
+
+        // [1] table.length와 같은 길이의 crossSums를 만든다.
         int[] crossSums = new int[table.length];
 
+        // [2] 바깥 반복문에서 결과 번호 index를 고른다.
         for (int index = 0; index < table.length; index++) {
             int crossSum = 0;
+
+            // [3] 안쪽 반복문에서 index번째 행의 값을 더한다.
             for (int offset = 0; offset < table.length; offset++) {
                 crossSum += table[index][offset];
+
+                // [4] 교차점이 아니라면 index번째 열의 값도 더한다.
                 if (offset != index) {
                     crossSum += table[offset][index];
                 }
             }
+
+            // [5] 합계를 crossSums[index]에 저장한다.
             crossSums[index] = crossSum;
         }
+
+        // [6] 모든 번호를 처리한 뒤 crossSums를 반환한다.
         return crossSums;
     }
 
