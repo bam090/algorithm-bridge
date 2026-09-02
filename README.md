@@ -121,6 +121,8 @@ cd algorithm-bridge
 
 Gradle이 `src/main/java`와 `src/test/java`를 각각 실행 코드와 테스트 코드로 인식하고 JUnit 의존성을 준비한다.
 
+IntelliJ가 `bridge.*` 패키지를 `main.java.bridge.*`로 바꾸라고 표시하면 Java 파일의 패키지나 위치를 고치지 않는다. 이는 예전 `src` 경로가 Source Root로 남아 있다는 뜻이므로 Gradle 프로젝트를 다시 불러온 뒤 Project Structure에서 `src/main/java`가 Sources, `src/test/java`가 Tests로 표시되는지 확인한다.
+
 터미널에서는 다음 명령으로 전체 테스트를 실행한다.
 
 ```bash

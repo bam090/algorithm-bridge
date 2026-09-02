@@ -191,6 +191,8 @@ src/test/java/bridge/<topic>/test/
 - Guide·Problem·Solution은 Java 표준 라이브러리만 사용하고, 테스트에는 JUnit Jupiter만 사용한다.
 - Maven이나 불필요한 Gradle 플러그인·의존성을 추가하지 않는다.
 - `.idea`, `algorithm-bridge.iml`, 기존 `src/main/java/Main.java`는 사용자가 요청하지 않으면 수정하지 않는다.
+- 소스나 테스트 디렉터리 구조를 바꾸면 기존 `.idea`와 `algorithm-bridge.iml`의 Source Root·Test Sources Root, Gradle의 소스 경로를 함께 대조한다. 상위의 예전 경로가 Source Root로 남아 새 경로를 패키지로 오인하지 않는지 반드시 확인한다.
+- 구조 변경 뒤에는 Java 파일의 패키지 선언과 실제 경로가 일치하는지, 이전 위치와 주제별 빈 디렉터리가 남지 않았는지 확인한다.
 - 패키지명은 소문자 영문으로 쓰고 파일명과 공개 클래스명을 일치시킨다.
 - 새 작업마다 Gradle로 `src/main/java`와 `src/test/java`의 모든 Java 파일을 컴파일한다. 실행 테스트는 새로 만들었거나 수정했거나 변경의 영향을 받는 파일만 대상으로 한다.
 - 독립 테스트까지 최종 PASS한 문제는 관련 Problem·Solution·Test·Guide·공통 계약이 바뀌지 않았다면 매 작업마다 다시 실행하지 않는다.
@@ -208,6 +210,7 @@ src/test/java/bridge/<topic>/test/
 - Guide, Problem, Solution, Test의 내용이 서로 일치하는가?
 - 코드 검증 뒤 모든 학습 주석을 다시 읽고, 부자연스럽거나 풀이 방향이 모호한 문장을 고쳤는가?
 - 처음 보는 작은 문제에서 개념 선택과 풀이 시작을 연습하게 하는가?
+- 디렉터리 구조를 바꿨다면 기존 IntelliJ 설정과 새 Gradle 소스 구조가 충돌하지 않는가?
 - IntelliJ와 Gradle에서 컴파일되고 모든 테스트가 통과하는가?
 
 최종 보고에는 생성한 문제 수와 결정 근거, 담당 사다리 슬롯, 문제별 핵심 접근 방식 또는 조합, 책 문제 중복 검사 결과, 컴파일·테스트 결과와 확인이 필요한 사항을 포함한다. 역할별 상세 형식은 `references/problem-generation-contract.md`를 따른다.
