@@ -97,7 +97,7 @@ Java 파일을 만들기 전에 문제마다 다음 카드를 작성한다. 카�
 
 ### 4.3 Guide 파일
 
-`src/bridge/<topic>/<Topic>Guide.java`에는 다음을 포함한다.
+`src/main/java/bridge/<topic>/<Topic>Guide.java`에는 다음을 포함한다.
 
 - 개념을 쉬운 말로 설명한 문장
 - Java 선언과 표준 라이브러리 사용 예시
@@ -177,7 +177,13 @@ Problem 파일은 다음 계약을 지킨다.
 
 ### 4.6 Test 파일
 
-파일명은 `<Topic>SolutionNNTest.java`이며 외부 테스트 라이브러리 없이 `main()`으로 실행한다.
+파일명은 `src/test/java/bridge/<topic>/test/<Topic>SolutionNNTest.java`이며 JUnit Jupiter로 실행한다.
+
+- 각 테스트 메서드에는 쉬운 한글 `@DisplayName`을 작성한다. 클래스에도 주제와 문제를 구분하는 이름이 필요하면 `@DisplayName`을 붙인다.
+- 서로 다른 검증 흐름은 `@Test`로 나누고, 같은 검증 구조에서 입력과 기대값만 달라지면 `@ParameterizedTest`를 사용한다.
+- Given/When/Then 주석은 준비·실행·검증의 경계를 읽는 데 실제로 도움이 될 때만 작성한다.
+- `main()`, 수동 PASS/FAIL 출력과 통과 수 집계를 만들지 않는다.
+- JUnit이 제공하는 기본 assertion을 같은 의미로 다시 구현하지 않는다. 다차원 배열처럼 전용 assertion이 없으면 작은 검증 도우미 안에서 JUnit assertion을 사용한다.
 
 테스트를 쓰기 전에 문제의 매개변수별 범위를 표로 정리하고, 서로 다른 오답을 잡는 입력만 선택한다.
 
@@ -200,21 +206,19 @@ Problem 파일은 다음 계약을 지킨다.
 
 - 기대값은 정답 코드의 출력에서 복사하지 않고 손으로 또는 독립 계산으로 먼저 정한다.
 - 실제 정답 메서드를 호출한다.
-- 값, 배열 내용, 원본 보존과 새 배열 반환처럼 같은 입력에서 확인할 조건을 하나의 테스트로 묶는다.
-- 통과하면 `[PASS] 테스트 이름`, 실패하면 `[FAIL] 테스트 이름: 이유`를 출력한다.
-- 한 테스트가 실패해도 나머지를 실행한다.
-- 마지막에 `통과 수/전체 수`를 출력한다.
-- 하나라도 실패하면 마지막에 `AssertionError`를 발생시킨다.
+- 값, 배열 내용, 원본 보존과 새 배열 반환처럼 같은 입력에서 확인할 조건을 하나의 테스트 또는 하나의 매개변수 호출로 묶는다.
+- 값은 `assertEquals`, 배열은 `assertArrayEquals`, 원본과 다른 객체인지는 `assertNotSame`처럼 뜻이 맞는 JUnit assertion으로 검증한다.
+- 여러 조건을 모두 확인할 필요가 있으면 `assertAll`로 묶어 한 조건의 실패가 같은 입력의 다른 검증을 가리지 않게 한다.
+- 한 테스트가 실패해도 나머지 테스트는 JUnit이 독립적으로 실행하고 결과와 실패 위치를 보고한다.
 
 ### 4.7 생성 에이전트 자체 검증
 
 제출 전에 다음을 직접 실행한다.
 
-1. 임시 출력 디렉터리를 새로 만든다.
-2. 변경한 주제뿐 아니라 `src` 아래 모든 `.java` 파일을 UTF-8로 컴파일한다.
-3. 새 Guide의 `main()`을 실행한다.
-4. 새 Test의 `main()`을 모두 실행한다.
-5. 생성된 `.class` 파일은 저장소에 남기지 않는다.
+1. `./gradlew clean testClasses --no-build-cache --rerun-tasks`로 실행 코드와 전체 테스트 코드를 새로 컴파일한다.
+2. 새 Guide의 `main()`을 `build/classes/java/main` 클래스 경로에서 실행한다.
+3. `./gradlew test --tests '<새 Test의 완전한 클래스명>' --no-build-cache --rerun-tasks`로 새 테스트를 실행한다.
+4. 생성된 `build` 결과는 Git에 포함하지 않는다.
 
 실패 로그는 원문 전체가 아니라 실패한 명령, 파일, 핵심 오류와 재현 입력만 보고한다.
 
@@ -270,28 +274,28 @@ test_engineer는 콘텐츠가 `PASS`한 뒤 실행 검증한다. 검증 중에�
 
 ### 6.1 환경 확인
 
-- `java -version`과 `javac -version`으로 Java 26 환경인지 기록한다.
-- Maven, Gradle, JUnit 또는 외부 라이브러리를 사용하지 않는다.
-- 저장소의 기존 `out`을 신뢰하지 않는다.
-- 저장소 밖 임시 디렉터리에 새로 컴파일한다.
+- `java -version`, `javac -version`과 `./gradlew --version`으로 Java 26과 Wrapper 환경을 기록한다.
+- 저장소의 전역 Gradle 설치 대신 저장소의 Gradle Wrapper를 사용한다.
+- 테스트에는 JUnit Jupiter만 사용하고 다른 테스트 라이브러리나 불필요한 플러그인을 추가하지 않는다.
+- 저장소의 기존 `out`이나 `build`를 신뢰하지 않고 `clean`, `--no-build-cache`, `--rerun-tasks`로 새로 검증한다.
 
 ### 6.2 필수 실행
 
 ```text
-javac -encoding UTF-8 -Xlint:all -Werror -d <임시 디렉터리> <src 아래 모든 Java 파일>
-java -cp <임시 디렉터리> <새 Guide의 완전한 클래스명>
-java -cp <임시 디렉터리> <각 새 Test의 완전한 클래스명>
+./gradlew clean testClasses --no-build-cache --rerun-tasks
+java -cp build/classes/java/main <새 Guide의 완전한 클래스명>
+./gradlew test --tests '<각 새 Test의 완전한 클래스명>' --no-build-cache --rerun-tasks
 ```
 
-공백·파일 수 때문에 셸 확장이 불안정하면 안전한 파일 목록을 만들어 `javac`의 인자 파일로 전달하되 저장소에는 스크립트나 목록 파일을 추가하지 않는다.
+모든 주제나 공통 테스트 계약이 바뀌면 개별 필터 대신 `./gradlew clean test --no-build-cache --rerun-tasks`로 전체를 실행한다.
 
 ### 6.3 회귀 테스트 범위
 
-- 새 작업마다 `src` 아래 모든 Java 파일을 컴파일해 패키지·서명·문법 충돌을 확인한다.
+- 새 작업마다 Gradle의 `testClasses`로 실행 코드와 전체 테스트 코드를 컴파일해 패키지·서명·문법 충돌을 확인한다.
 - 실제 실행은 새로 만들었거나 수정했거나 변경의 영향을 받는 Guide와 Test만 대상으로 한다.
 - 독립 test_engineer가 최종 `PASS`했고 이후 관련 Problem·Solution·Test·Guide·공통 계약이 바뀌지 않은 문제는 매 작업마다 다시 실행하지 않는다.
 - 공통 코드나 계약이 바뀌면 영향을 받는 모든 테스트를 다시 실행한다.
-- 모든 주제 구현이 끝나면 통합 상태 확인용으로 전체 Test의 `main()`을 마지막 한 번 실행한다.
+- 모든 주제 구현이 끝나면 통합 상태 확인용으로 `./gradlew test`를 마지막 한 번 실행한다.
 
 ### 6.4 독립 테스트 감사
 
@@ -302,19 +306,20 @@ java -cp <임시 디렉터리> <각 새 Test의 완전한 클래스명>
 - 각 매개변수의 하한·중간·상한 중 필요한 값이 실제 입력에 들어 있는가?
 - 각 테스트가 어떤 흔한 오답을 잡는지 설명할 수 있는가?
 - 최대 입력 테스트가 단지 느리게 만드는 중복 케이스가 아닌가?
-- 모든 `[PASS]` 출력과 최종 통과 수를 실제로 확인했는가?
-- 실패 시 마지막 `AssertionError`가 실제 프로세스를 실패시키는가?
+- 모든 대상 테스트가 JUnit에 발견되어 실행되었는가?
+- 각 테스트와 매개변수 호출의 한글 `@DisplayName`이 결과에서 읽기 쉽게 표시되는가?
+- assertion 실패가 Gradle 테스트 작업을 실제로 실패시키는가?
 
 ### 6.5 판정 형식
 
 ```text
 상태: PASS | FAIL | BLOCKED
 
-1. Java·javac 실제 버전
+1. Java·javac·Gradle Wrapper·JUnit 실제 버전
 2. 실행한 정확한 명령
 3. 컴파일 결과
 4. Guide 실행 결과
-5. Test별 통과 수/전체 수
+5. Test별 실행 수와 통과·실패·건너뜀 수
 6. 독립 테스트 범위 감사
 7. 실패 재현 입력 또는 남은 위험
 ```
@@ -323,7 +328,7 @@ java -cp <임시 디렉터리> <각 새 Test의 완전한 클래스명>
 
 ## 7. 번호와 패키지 규칙
 
-- 새 주제는 `src/bridge/<topic>/` 아래 Guide와 `problem`, `solution`, `test` 패키지를 만든다.
+- 새 주제의 Guide·Problem·Solution은 `src/main/java/bridge/<topic>/` 아래 만들고 Test는 `src/test/java/bridge/<topic>/test/` 아래 만든다.
 - 배열은 `bridge.array.onedimensional`과 `bridge.array.twodimensional`을 분리하고 공통 Guide는 `bridge.array`에 둔다.
 - 문제 번호는 같은 주제에서 중복하지 않고 두 자리로 이어 간다.
 - Problem·Solution·Test의 번호는 반드시 일치한다.

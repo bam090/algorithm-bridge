@@ -94,14 +94,15 @@ problem_generator
 주제를 처음 작업할 때만 다음 구조를 만든다. `<topic>`은 소문자 영문 패키지명으로 바꾼다.
 
 ```text
-src/bridge/<topic>/
+src/main/java/bridge/<topic>/
 ├── <Topic>Guide.java
 ├── problem/
 │   └── <Topic>Problem01.java
-├── solution/
-│   └── <Topic>Solution01.java
-└── test/
-    └── <Topic>Solution01Test.java
+└── solution/
+    └── <Topic>Solution01.java
+
+src/test/java/bridge/<topic>/test/
+└── <Topic>Solution01Test.java
 ```
 
 각 파일의 책임은 다음과 같다.
@@ -157,9 +158,10 @@ src/bridge/<topic>/
 
 ### Test
 
-- JUnit이나 외부 라이브러리를 사용하지 않는다.
-- `main()`에서 정답 코드를 서로 다른 여러 입력으로 직접 실행한다.
-- 입력 한 번을 테스트 한 개로 세고, 그 입력의 결과·원본 보존·새 배열 반환 검사는 같은 테스트 안에 묶는다.
+- JUnit Jupiter를 사용하고 다른 테스트 라이브러리는 추가하지 않는다.
+- 각 테스트 메서드에는 초보자가 바로 이해할 수 있는 한글 `@DisplayName`을 작성한다. 클래스에도 주제와 문제를 구분하는 이름이 필요하면 `@DisplayName`을 붙인다.
+- 일반 케이스는 `@Test`로 작성하고, 같은 검증 구조에서 입력과 기대값만 달라지면 `@ParameterizedTest`를 사용한다.
+- 매개변수 테스트의 입력 한 번을 테스트 한 개로 세고, 그 입력의 결과·원본 보존·새 배열 반환 검사는 같은 테스트 안에 묶는다.
 - 테스트를 만들기 전에 각 매개변수의 숫자 범위, 길이 범위와 위치 범위를 먼저 적는다.
 - 숫자 범위에서는 하한, `0`, `940` 같은 일반 중간값과 상한을 실제 입력으로 넣는다.
 - `이상·이하`처럼 양끝을 포함하면 경계값 자체를 넣고, 엄격한 `<`·`>`이면 범위 안쪽에서 경계에 가장 가까운 값을 넣는다.
@@ -170,27 +172,29 @@ src/bridge/<topic>/
 - 기대값은 정답 코드에서 가져오지 않고 손으로 또는 별도 계산으로 먼저 확정한다.
 - 정상 입력, 경계 입력, 초보자가 실수하기 쉬운 입력과 필요할 때 최대 제약 입력을 포함한다.
 - 같은 조건을 반복해 개수를 채우지 않고, 서로 다른 오답을 잡는 데 필요한 테스트만 추가한다.
-- 각 테스트는 프로그래머스처럼 `[PASS]` 또는 `[FAIL]`을 출력하고 마지막에 `통과 수/전체 수`를 출력한다.
-- 한 테스트가 실패해도 나머지 테스트를 실행하며, 하나라도 실패하면 마지막에 `AssertionError`를 발생시킨다.
+- 값, 배열, 원본 보존과 새 배열 반환은 JUnit assertion으로 검증한다.
+- Given/When/Then 주석은 테스트의 준비·실행·검증 구분에 실제로 도움이 될 때만 작성한다.
+- `main()`, 수동 PASS/FAIL 출력과 통과 수 집계를 만들지 않는다.
+- JUnit이 제공하는 기본 assertion을 같은 의미로 다시 구현하지 않는다. 다차원 배열처럼 전용 assertion이 없으면 작은 검증 도우미 안에서 JUnit assertion을 사용한다.
+- 한 테스트가 실패해도 나머지 테스트는 JUnit이 독립적으로 실행한다.
 - 테스트는 모든 입력에 대한 수학적 증명이 아니라 정답 코드가 문제 계약을 만족한다는 실행 근거다.
 
 ## 구현 제약
 
 - 이 프로젝트는 Java 전용 IntelliJ IDEA 프로젝트다.
-- 학습 예제, 문제 골격, 정답, 테스트와 검증 보조 소스는 모두 Java `.java` 파일로 작성한다.
+- 학습 예제, 문제 골격, 정답과 테스트는 모두 Java `.java` 파일로 작성한다.
 - JavaScript, TypeScript, Python, Kotlin, Groovy, SQL 등 다른 프로그래밍 언어의 소스나 실행기를 추가하지 않는다.
 - 문서 안에 코드를 예시로 넣어야 할 때도 Java만 사용한다.
-- Markdown 문서와 IntelliJ 설정 파일은 실행 코드가 아니므로 유지할 수 있다.
-- 터미널에서 `javac`와 `java`를 호출해 검증할 수 있지만, 저장소에 별도 셸 스크립트를 추가하지 않는다.
-- IntelliJ IDEA 기본 빌드와 현재 설정된 Amazon Corretto 26을 사용한다.
-- `src`는 이미 Source Root다.
-- Java 표준 라이브러리만 사용한다.
-- Maven, Gradle, JUnit 또는 불필요한 의존성을 추가하지 않는다.
-- `.idea`, `algorithm-bridge.iml`, 기존 `src/Main.java`는 사용자가 요청하지 않으면 수정하지 않는다.
+- Markdown 문서, IntelliJ 설정 파일과 Gradle 빌드·Wrapper 파일은 실행 코드가 아니므로 유지할 수 있다.
+- Gradle Wrapper와 현재 설정된 Amazon Corretto 26을 사용한다.
+- `src/main/java`는 실행 코드 Source Root이고 `src/test/java`는 테스트 코드 Source Root다.
+- Guide·Problem·Solution은 Java 표준 라이브러리만 사용하고, 테스트에는 JUnit Jupiter만 사용한다.
+- Maven이나 불필요한 Gradle 플러그인·의존성을 추가하지 않는다.
+- `.idea`, `algorithm-bridge.iml`, 기존 `src/main/java/Main.java`는 사용자가 요청하지 않으면 수정하지 않는다.
 - 패키지명은 소문자 영문으로 쓰고 파일명과 공개 클래스명을 일치시킨다.
-- 새 작업마다 `src`의 모든 Java 파일을 컴파일한다. 실행 테스트는 새로 만들었거나 수정했거나 변경의 영향을 받는 파일만 대상으로 한다.
+- 새 작업마다 Gradle로 `src/main/java`와 `src/test/java`의 모든 Java 파일을 컴파일한다. 실행 테스트는 새로 만들었거나 수정했거나 변경의 영향을 받는 파일만 대상으로 한다.
 - 독립 테스트까지 최종 PASS한 문제는 관련 Problem·Solution·Test·Guide·공통 계약이 바뀌지 않았다면 매 작업마다 다시 실행하지 않는다.
-- 모든 주제 구현이 끝나면 통합 상태 확인을 위해 전체 Test의 `main()`을 마지막으로 한 번 실행한다.
+- 모든 주제 구현이 끝나면 통합 상태 확인을 위해 `./gradlew test`로 전체 테스트를 마지막으로 한 번 실행한다.
 
 ## 완료 전 자체 검증
 
@@ -204,6 +208,6 @@ src/bridge/<topic>/
 - Guide, Problem, Solution, Test의 내용이 서로 일치하는가?
 - 코드 검증 뒤 모든 학습 주석을 다시 읽고, 부자연스럽거나 풀이 방향이 모호한 문장을 고쳤는가?
 - 처음 보는 작은 문제에서 개념 선택과 풀이 시작을 연습하게 하는가?
-- IntelliJ 기본 빌드에서 컴파일되고 모든 테스트가 통과하는가?
+- IntelliJ와 Gradle에서 컴파일되고 모든 테스트가 통과하는가?
 
 최종 보고에는 생성한 문제 수와 결정 근거, 담당 사다리 슬롯, 문제별 핵심 접근 방식 또는 조합, 책 문제 중복 검사 결과, 컴파일·테스트 결과와 확인이 필요한 사항을 포함한다. 역할별 상세 형식은 `references/problem-generation-contract.md`를 따른다.
