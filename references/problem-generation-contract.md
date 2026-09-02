@@ -219,6 +219,7 @@ Problem 파일은 다음 계약을 지킨다.
 2. 새 Guide의 `main()`을 `build/classes/java/main` 클래스 경로에서 실행한다.
 3. `./gradlew test --tests '<새 Test의 완전한 클래스명>' --no-build-cache --rerun-tasks`로 새 테스트를 실행한다.
 4. 생성된 `build` 결과는 Git에 포함하지 않는다.
+5. 소스나 테스트 디렉터리 구조를 바꿨다면 기존 `.idea`·`algorithm-bridge.iml`과 Gradle 소스 경로를 대조하고, Java 패키지 경로를 잘못 해석하게 만드는 예전 상위 Source Root와 빈 디렉터리가 남지 않았는지 확인한다.
 
 실패 로그는 원문 전체가 아니라 실패한 명령, 파일, 핵심 오류와 재현 입력만 보고한다.
 
@@ -238,6 +239,8 @@ content_validator는 생성 에이전트의 설명을 신뢰하지 않고 파일
 - Solution의 데이터 흐름, 시간·공간 복잡도가 코드와 일치하는가?
 - Test가 제약의 하한·중간·상한과 대표 오답을 실제 값으로 검증하는가?
 - Java 주석이 초보자에게 자연스럽고, 불필요한 HTML이나 풀이 선공개가 없는가?
+- 디렉터리 구조가 바뀌었다면 Java 패키지와 실제 경로, Gradle 소스 경로, IntelliJ의 Source Root·Test Sources Root가 서로 일치하며 예전 설정이 남지 않았는가?
+- 파일 이동 뒤 이전 위치와 주제별 빈 디렉터리가 남지 않았는가?
 
 ### 5.2 책 문제 독립성 검토
 
@@ -278,6 +281,7 @@ test_engineer는 콘텐츠가 `PASS`한 뒤 실행 검증한다. 검증 중에�
 - 저장소의 전역 Gradle 설치 대신 저장소의 Gradle Wrapper를 사용한다.
 - 테스트에는 JUnit Jupiter만 사용하고 다른 테스트 라이브러리나 불필요한 플러그인을 추가하지 않는다.
 - 저장소의 기존 `out`이나 `build`를 신뢰하지 않고 `clean`, `--no-build-cache`, `--rerun-tasks`로 새로 검증한다.
+- 디렉터리 구조가 바뀌면 Gradle 빌드 성공만으로 끝내지 않고 기존 `.idea`·`algorithm-bridge.iml`의 Source Root·Test Sources Root가 새 구조와 충돌하지 않는지 확인한다. IntelliJ 실행이 불가능한 환경이면 설정 파일 대조 결과와 GUI 미확인 사항을 따로 보고한다.
 
 ### 6.2 필수 실행
 
@@ -309,13 +313,14 @@ java -cp build/classes/java/main <새 Guide의 완전한 클래스명>
 - 모든 대상 테스트가 JUnit에 발견되어 실행되었는가?
 - 각 테스트와 매개변수 호출의 한글 `@DisplayName`이 결과에서 읽기 쉽게 표시되는가?
 - assertion 실패가 Gradle 테스트 작업을 실제로 실패시키는가?
+- 구조 변경 뒤 Java 패키지 경로와 IntelliJ·Gradle 소스 루트가 일치하고, 예전 Source Root와 빈 디렉터리가 남지 않았는가?
 
 ### 6.5 판정 형식
 
 ```text
 상태: PASS | FAIL | BLOCKED
 
-1. Java·javac·Gradle Wrapper·JUnit 실제 버전
+1. Java·javac·Gradle Wrapper·JUnit 실제 버전과 IntelliJ·Gradle 소스 루트 일치 여부
 2. 실행한 정확한 명령
 3. 컴파일 결과
 4. Guide 실행 결과
