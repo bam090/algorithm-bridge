@@ -55,7 +55,7 @@ Algorithm Bridge의 문제는 책의 몸풀기·모의테스트와 별도로 만
 
 ```text
 배열 → 스택 → 큐 → 해시 → 트리 → 집합 → 그래프
-→ 백트래킹 → 정렬 → 시뮬레이션 → 동적 계획법 → 그리디
+→ 백트래킹 → 정렬 → 투 포인터 → 시뮬레이션 → 동적 계획법 → 그리디
 ```
 
 각 주제는 IntelliJ의 `src/bridge` 아래에서 다음 패키지로 찾는다.
@@ -73,6 +73,7 @@ src/bridge/
 ├── graph/               그래프
 ├── backtracking/        백트래킹
 ├── sorting/             정렬
+├── twopointer/          투 포인터
 ├── simulation/          시뮬레이션
 ├── dynamicprogramming/  동적 계획법
 └── greedy/              그리디
