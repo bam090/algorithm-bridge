@@ -58,10 +58,10 @@ Algorithm Bridge의 문제는 책의 몸풀기·모의테스트와 별도로 만
 → 백트래킹 → 정렬 → 투 포인터 → 시뮬레이션 → 동적 계획법 → 그리디
 ```
 
-각 주제는 IntelliJ의 `src/bridge` 아래에서 다음 패키지로 찾는다.
+각 주제는 IntelliJ의 `src/main/java/bridge` 아래에서 다음 패키지로 찾는다.
 
 ```text
-src/bridge/
+src/main/java/bridge/
 ├── array/               배열
 │   ├── onedimensional/  1차원 배열
 │   └── twodimensional/  2차원 배열
@@ -83,11 +83,12 @@ src/bridge/
 
 ## 실행 환경
 
-- IntelliJ IDEA 기본 빌드
+- Gradle Wrapper 9.6.0
+- JUnit Jupiter 6.0.2
 - Amazon Corretto 26
-- `src` 디렉터리를 Source Root로 사용
-- Java 표준 라이브러리만 사용
-- Maven, Gradle, JUnit을 전제로 하지 않음
+- `src/main/java`를 실행 코드 Source Root로 사용
+- `src/test/java`를 테스트 코드 Source Root로 사용
+- Guide·Problem·Solution은 Java 표준 라이브러리만 사용
 
 ## 사용 방법
 
@@ -115,11 +116,24 @@ cd algorithm-bridge
 
 1. IntelliJ IDEA에서 `Open`을 선택한다.
 2. 내려받은 `algorithm-bridge` 폴더를 연다.
-3. Project SDK가 Amazon Corretto 26인지 확인한다.
+3. Gradle 프로젝트로 불러오거나 `build.gradle`의 Gradle 변경 사항을 적용한다.
+4. Project SDK와 Gradle JVM이 Amazon Corretto 26인지 확인한다.
 
-저장소에 IntelliJ 설정이 포함되어 있으므로 `src`는 일반적으로 자동 인식된다.
+Gradle이 `src/main/java`와 `src/test/java`를 각각 실행 코드와 테스트 코드로 인식하고 JUnit 의존성을 준비한다.
 
-> package·import 오류가 표시되거나 실행 버튼이 나타나지 않을 때만 `src` 우클릭 → `Mark Directory as` → `Sources Root`를 선택한다.
+터미널에서는 다음 명령으로 전체 테스트를 실행한다.
+
+```bash
+./gradlew test
+```
+
+특정 테스트 클래스만 실행하려면 완전한 클래스명을 지정한다.
+
+```bash
+./gradlew test --tests 'bridge.array.onedimensional.test.ArraySolution01Test'
+```
+
+Windows에서는 `gradlew.bat test`를 사용한다.
 
 ### 주제별로 학습하기
 
@@ -127,7 +141,7 @@ cd algorithm-bridge
 2. `problem/<Topic>ProblemNN.java`의 문제와 생각 질문을 읽는다.
 3. 접어 둔 접근 방식은 먼저 펼치지 않고 `solve()`를 직접 구현한다.
 4. 구현을 마친 뒤 `solution/<Topic>SolutionNN.java`와 접근 방식·데이터 흐름·코드를 비교한다.
-5. `test/<Topic>SolutionNNTest.java`의 `main()`을 실행해 정답 코드가 여러 입력과 경계값을 처리하는 과정을 확인한다.
+5. `src/test/java`의 `<Topic>SolutionNNTest.java`를 JUnit으로 실행해 정답 코드가 여러 입력과 경계값을 처리하는지 확인한다.
 
 > [!NOTE]
 > 현재 Test 파일은 학습자가 작성한 `ProblemNN.solve()`가 아니라 제공된 `SolutionNN.solve()`를 검증한다. 테스트 결과는 정답 코드와 문제 계약의 실행 근거이며, 학습자가 작성한 코드의 자동 채점 결과가 아니다.
@@ -140,29 +154,29 @@ cd algorithm-bridge
 
 ```text
 src/
-└── bridge/
-    └── array/
-        ├── ArrayGuide.java
-        ├── onedimensional/
-        │   ├── problem/
-        │   │   └── ArrayProblem01.java
-        │   ├── solution/
-        │   │   └── ArraySolution01.java
-        │   └── test/
-        │       └── ArraySolution01Test.java
-        └── twodimensional/
-            ├── problem/
-            │   └── ArrayProblem07.java
-            ├── solution/
-            │   └── ArraySolution07.java
-            └── test/
-                └── ArraySolution07Test.java
+├── main/java/bridge/array/
+│   ├── ArrayGuide.java
+│   ├── onedimensional/
+│   │   ├── problem/
+│   │   │   └── ArrayProblem01.java
+│   │   └── solution/
+│   │       └── ArraySolution01.java
+│   └── twodimensional/
+│       ├── problem/
+│       │   └── ArrayProblem07.java
+│       └── solution/
+│           └── ArraySolution07.java
+└── test/java/bridge/array/
+    ├── onedimensional/test/
+    │   └── ArraySolution01Test.java
+    └── twodimensional/test/
+        └── ArraySolution07Test.java
 ```
 
 - `Guide`: 개념, Java 사용 예시, 문제에서 알아볼 단서, 흔한 실수를 설명한다.
 - `problem`: 문제 설명·입출력·생각 질문·접근 방식·제약 조건·힌트를 제목별로 따로 접을 수 있게 두고, 직접 작성할 `solve()` 메서드는 펼쳐 둔다.
 - `solution`: 정답 코드뿐 아니라 선택 이유, 데이터 흐름과 시간·공간 복잡도를 설명한다.
-- `test`: 제약에서 고른 하한·0·일반 중간값·상한과 길이 경계를 정답 코드에 넣고, 프로그래머스처럼 테스트별 통과 여부와 전체 결과를 보여준다.
+- `test`: 제약에서 고른 하한·0·일반 중간값·상한과 길이 경계를 JUnit으로 검증하고, IntelliJ나 Gradle의 테스트 결과에서 통과 여부를 보여준다.
 - 배열 문제는 `onedimensional`과 `twodimensional` 하위 패키지로 나눠 차원을 구분한다.
 
 ## 설계·작업 문서
